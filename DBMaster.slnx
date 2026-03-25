@@ -1,1 +1,5 @@
-<Solution />
+<Solution>
+  <Project Path="EventsTrackerMSSQLServer/EventsTrackerMSSQLServer.csproj" />
+  <Project Path="RestaurantPostgreSQL/RestaurantPostgreSQL.csproj" />
+  <Project Path="TransportationMongoDB/TransportationMongoDB.csproj" />
+</Solution>

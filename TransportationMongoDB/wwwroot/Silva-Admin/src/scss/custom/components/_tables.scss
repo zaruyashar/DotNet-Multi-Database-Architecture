@@ -1,0 +1,85 @@
+// 
+// tables.scss
+//
+
+.table-traffic td {
+    font-weight: 400;
+    vertical-align: middle;
+    font-size: 14px;
+    padding: 11px 11px;
+}
+
+.table-traffic thead th{
+    padding: 0px 11px;
+    background-color: $white;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    font-weight: 600;
+} 
+
+.table-traffic tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-traffic tr th:first-child, 
+.table-traffic tr td:first-child {
+    padding-left: 1.25rem;
+}
+
+.table-traffic tr th:last-child,
+.table-traffic tr td:last-child {
+    padding-right: 1.25rem;
+}
+
+
+// 
+// table stock
+// 
+.table-stock td{
+    font-weight: 400;
+    vertical-align: middle;
+    font-size: 14px;
+    padding: 13px 13px;
+}
+
+.table-stock thead th{
+    padding: 0px 11px;
+    background-color: $white;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    font-weight: 600;
+}
+
+.table-stock tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-stock tr th:first-child, 
+.table-stock tr td:first-child {
+    padding-left: 1.25rem;
+}
+
+.table-stock tr th:last-child,
+.table-stock tr td:last-child {
+    padding-right: 1.25rem;
+}
+
+// 
+.table-card td {
+    font-weight: 400;
+    vertical-align: middle;
+    font-size: 14px;
+    padding: .75rem .6rem;
+}
+.table-card th {
+    padding: .75rem .6rem;
+}
+.table-card thead th {
+    font-weight: 600;
+}
+.table-card thead th:first-child {
+    border-radius: 5px 0 0 5px;
+}
+.table thead th:last-child {
+    border-radius: 0 8px 8px 0;
+}

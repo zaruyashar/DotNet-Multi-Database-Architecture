@@ -1,0 +1,52 @@
+// 
+// Select Database.scss
+//
+
+.datatable-selector {
+    padding: 6px;
+    border-radius: 4px;
+    border-color: $border-color !important;
+    color: $black !important;
+    background-color: $card-bg !important;
+}
+
+.dataTable-top,.datatable-top {
+    padding-top: 0;
+}
+
+.datatable-table>tbody>tr>td {
+    padding: .75rem .75rem;
+    vertical-align: middle;
+}
+
+.datatable-table>thead {
+    background-color: $light !important;
+}
+
+.datatable-bottom {
+    margin-top: 1.5rem;
+    padding: 0;
+}
+
+.datatable-pagination .datatable-active button {
+    color: #fff;
+    background-color: $primary !important;
+    border-color: $primary !important;
+}
+
+.datatable-pagination-list-item .datatable-pagination-list-item-link {
+    background-color: $card-bg !important;
+    border: 1px solid $border-color !important;
+}
+
+.datatable-info {
+    margin: 7px 0;
+}
+
+.datatable-selector {
+    margin-right: 6px;
+}
+
+.datatable-sorter::before {
+    bottom: 0px;
+}
