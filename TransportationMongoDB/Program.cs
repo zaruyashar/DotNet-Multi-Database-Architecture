@@ -1,6 +1,10 @@
+using TransportationMongoDB.Services.SliderServices;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddScoped<ISliderService, SliderService>();
+
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
