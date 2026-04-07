@@ -1,0 +1,588 @@
+﻿@model GetSliderByIdDto
+
+@{
+    ViewData["Title"] = "UpdateSlider";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+    :root {
+        --primary: #2D3250;
+        --primary-light: #424769;
+        --accent: #F6B17A;
+        --accent-hover: #E89A5C;
+        --bg: #F8F9FA;
+        --card-bg: #FFFFFF;
+        --text: #2D3250;
+        --text-muted: #7B8794;
+        --border: #E8ECF1;
+        --shadow-sm: 0 2px 8px rgba(45, 50, 80, 0.04);
+        --shadow-md: 0 8px 24px rgba(45, 50, 80, 0.08);
+        --shadow-lg: 0 16px 48px rgba(45, 50, 80, 0.12);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Outfit', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+    }
+
+    .create-slider-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-header {
+        margin-bottom: 48px;
+        position: relative;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--accent), var(--accent-hover));
+        border-radius: 2px;
+    }
+
+    .page-header-content {
+        padding-left: 24px;
+    }
+
+    .page-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+        font-size: 16px;
+        color: var(--text-muted);
+        font-weight: 300;
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+    .form-content {
+        padding: 48px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+        margin-bottom: 32px;
+    }
+
+    .form-group {
+        position: relative;
+        animation: slideUp 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.15s; }
+    .form-group:nth-child(3) { animation-delay: 0.2s; }
+    .form-group:nth-child(4) { animation-delay: 0.25s; }
+
+    @@keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Space Mono', monospace;
+    }
+
+    .form-label-icon {
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--accent);
+        border-radius: 4px;
+        color: white;
+        font-size: 10px;
+    }
+
+    .form-input,
+    .form-textarea {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 15px;
+        font-family: 'Outfit', sans-serif;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg);
+        color: var(--text);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+        border-color: var(--accent);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(246, 177, 122, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 140px;
+        font-family: 'Outfit', sans-serif;
+        line-height: 1.6;
+    }
+
+    .char-counter {
+        text-align: right;
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 8px;
+        font-family: 'Space Mono', monospace;
+    }
+
+    .image-preview-section {
+        margin-top: 32px;
+        padding: 32px;
+        background: var(--bg);
+        border-radius: 12px;
+        border: 2px dashed var(--border);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .image-preview-section:hover {
+        border-color: var(--accent);
+        background: white;
+    }
+
+    .preview-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+    }
+
+    .preview-icon {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .preview-icon svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+    }
+
+    .preview-text {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+    }
+
+    .preview-hint {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    .preview-image {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 8px;
+        box-shadow: var(--shadow-md);
+        display: none;
+    }
+
+    .preview-image.show {
+        display: block;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        padding-top: 32px;
+        border-top: 1px solid var(--border);
+        animation: slideUp 0.5s ease-out 0.3s;
+        animation-fill-mode: both;
+    }
+
+    .btn {
+        padding: 16px 32px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Outfit', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        border-color: var(--primary);
+        background: var(--bg);
+    }
+
+    .form-footer {
+        background: var(--bg);
+        padding: 24px 48px;
+        border-top: 1px solid var(--border);
+    }
+
+    .form-tips {
+        display: flex;
+        align-items: start;
+        gap: 16px;
+        padding: 20px;
+        background: linear-gradient(135deg, rgba(246, 177, 122, 0.1), rgba(246, 177, 122, 0.05));
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .tips-icon {
+        width: 24px;
+        height: 24px;
+        color: var(--accent);
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .tips-content h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 8px;
+    }
+
+    .tips-content ul {
+        list-style: none;
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.8;
+    }
+
+    .tips-content li::before {
+        content: "→";
+        color: var(--accent);
+        margin-right: 8px;
+        font-weight: 700;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .form-content {
+            padding: 32px 24px;
+        }
+
+        .form-footer {
+            padding: 20px 24px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Input focus animations */
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .form-input:focus + .char-counter,
+    .form-textarea:focus + .char-counter {
+        color: var(--accent);
+        animation: pulse 2s ease-in-out infinite;
+    }
+</style>
+
+<div class="create-slider-container">
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">Slider'ları Güncelleme</h1>
+            <p class="page-subtitle">Mevcut slider'larınızı güncelleyebilirsiniz</p>
+        </div>
+    </div>
+
+    <form method="post" id="sliderForm">
+        <input type="hidden" asp-for="SliderId" />
+        <div class="form-card">
+            <div class="form-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Title">
+                            <span class="form-label-icon">T</span>
+                            Başlık
+                        </label>
+                        <input type="text" 
+                               class="form-input" 
+                               asp-for="Title" 
+                               placeholder="Slider başlığını girin..."
+                               maxlength="100"
+                               required />
+                        <div class="char-counter">
+                            <span id="titleCounter">0</span> / 100
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="SubTitle">
+                            <span class="form-label-icon">S</span>
+                            Alt Başlık
+                        </label>
+                        <input type="text" 
+                               class="form-input" 
+                               asp-for="SubTitle" 
+                               placeholder="Alt başlık girin..."
+                               maxlength="150" />
+                        <div class="char-counter">
+                            <span id="subtitleCounter">0</span> / 150
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label" asp-for="Description">
+                            <span class="form-label-icon">D</span>
+                            Açıklama
+                        </label>
+                        <textarea class="form-textarea" 
+                                  asp-for="Description" 
+                                  placeholder="Slider açıklamasını girin..."
+                                  maxlength="500"></textarea>
+                        <div class="char-counter">
+                            <span id="descCounter">0</span> / 500
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label" asp-for="ImageUrl">
+                            <span class="form-label-icon">I</span>
+                            Görsel URL
+                        </label>
+                        <input type="text" 
+                               class="form-input" 
+                               asp-for="ImageUrl" 
+                               id="imageUrlInput"
+                               placeholder="https://example.com/image.jpg"
+                               required />
+                    </div>
+                </div>
+
+                <div class="image-preview-section" id="imagePreviewSection">
+                    <div class="preview-placeholder" id="previewPlaceholder">
+                        <div class="preview-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <p class="preview-text">Görsel URL'si girildiğinde önizleme burada görünecek</p>
+                        <p class="preview-hint">Önerilen boyut: 1920x1080 px</p>
+                    </div>
+                    <img src="" alt="Slider Preview" class="preview-image" id="previewImage" />
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <div class="form-tips">
+                    <svg class="tips-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="tips-content">
+                        <h4>İpuçları</h4>
+                        <ul>
+                            <li>Başlık kısa ve etkili olmalı (maks. 100 karakter)</li>
+                            <li>Görsel yüksek kaliteli ve 1920x1080 px boyutunda olmalı</li>
+                            <li>Açıklama, ziyaretçilere net bir mesaj vermeli</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="/Slider/SliderList/" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    İptal
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Slider'ı Güncelle
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Character counters
+    const inputs = [
+        { input: 'input[name="Title"]', counter: 'titleCounter' },
+        { input: 'input[name="SubTitle"]', counter: 'subtitleCounter' },
+        { input: 'textarea[name="Description"]', counter: 'descCounter' }
+    ];
+
+    inputs.forEach(({ input, counter }) => {
+        const element = document.querySelector(input);
+        const counterElement = document.getElementById(counter);
+        
+        if (element && counterElement) {
+            element.addEventListener('input', (e) => {
+                counterElement.textContent = e.target.value.length;
+            });
+        }
+    });
+
+    // Image preview
+    const imageUrlInput = document.getElementById('imageUrlInput');
+    const previewImage = document.getElementById('previewImage');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+
+    if (imageUrlInput && previewImage) {
+        imageUrlInput.addEventListener('input', (e) => {
+            const url = e.target.value.trim();
+            
+            if (url) {
+                previewImage.src = url;
+                previewImage.onload = () => {
+                    previewImage.classList.add('show');
+                    previewPlaceholder.style.display = 'none';
+                };
+                previewImage.onerror = () => {
+                    previewImage.classList.remove('show');
+                    previewPlaceholder.style.display = 'flex';
+                };
+            } else {
+                previewImage.classList.remove('show');
+                previewPlaceholder.style.display = 'flex';
+            }
+        });
+    }
+
+    // Form validation enhancement
+    const form = document.getElementById('sliderForm');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            const requiredInputs = form.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.style.borderColor = '#ef4444';
+                    setTimeout(() => {
+                        input.style.borderColor = '';
+                    }, 2000);
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Lütfen tüm zorunlu alanları doldurun!');
+            }
+        });
+    }
+</script>

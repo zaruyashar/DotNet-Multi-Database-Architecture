@@ -5,6 +5,8 @@
     Layout = "~/Views/AdminLayout/Index.cshtml";
 }
 
+
+
 <style>
     @@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap');
 
@@ -46,15 +48,18 @@
     }
 
     @@keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
+        from
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     }
 
     /* Header Section */
@@ -187,15 +192,18 @@
         }
 
     @@keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
+        from
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     }
 
     .stat-card:hover {
@@ -569,51 +577,60 @@
 
     /* Responsive */
     @@media (max-width: 1024px) {
-        .slider-table th:nth-child(3), .slider-table td:nth-child(3) {
-            display: none;
-        }
+        .slider-table th:nth-child(3), .slider-table td:nth-child(3)
+
+    {
+        display: none;
+    }
+
     }
 
     @@media (max-width: 768px) {
-        .page-header {
-            flex-direction: column;
-        }
+        .page-header
 
-        .header-actions {
-            width: 100%;
-            justify-content: stretch;
-        }
+    {
+        flex-direction: column;
+    }
 
-        .btn-primary {
-            flex: 1;
-        }
+    .header-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
 
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+    .btn-primary {
+        flex: 1;
+    }
 
-        .control-bar {
-            flex-direction: column;
-            align-items: stretch;
-        }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 
-        .search-box {
-            min-width: 100%;
-        }
+    .control-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
-        .table-wrapper {
-            overflow-x: scroll;
-        }
+    .search-box {
+        min-width: 100%;
+    }
 
-        .slider-table {
-            min-width: 800px;
-        }
+    .table-wrapper {
+        overflow-x: scroll;
+    }
+
+    .slider-table {
+        min-width: 800px;
+    }
+
     }
 
     @@media (max-width: 480px) {
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
+        .stats-grid
+
+    {
+        grid-template-columns: 1fr;
+    }
+
     }
 </style>
 
@@ -627,7 +644,7 @@
             </div>
         </div>
         <div class="header-actions">
-            <a href="/Slider/CreateSlider/" class="btn btn-primary">
+            <a href="/Admin/Slider/CreateSlider" class="btn btn-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -748,12 +765,12 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a href="/Slider/UpdateSlider/@item.SliderId" class="action-btn edit" title="Düzenle">
+                                        <a href="/Admin/Slider/UpdateSlider/@item.SliderId" class="action-btn edit" title="Düzenle">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                         </a>
-                                        <a href="/Slider/DeleteSlider/@item.SliderId" class="action-btn delete" title="Sil" onclick="return confirm('Bu slider\'ı silmek istediğinizden emin misiniz?')">
+                                        <a href="/Admin/Slider/DeleteSlider/@item.SliderId" class="action-btn delete" title="Sil" onclick="return confirm('Bu slider\'ı silmek istediğinizden emin misiniz?')">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                             </svg>
@@ -775,7 +792,7 @@
                     </div>
                     <h3 class="empty-title">Henüz Slider Yok</h3>
                     <p class="empty-text">Başlamak için ilk slider'ınızı oluşturun</p>
-                    <a href="/Slider/CreateSlider" class="btn btn-primary">
+                    <a href="/Admin/Slider/CreateSlider" class="btn btn-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>

@@ -1,0 +1,61 @@
+﻿@model List<ResultShipmentTrackingDto>
+
+<h2>Kargo Hareketleri - @ViewBag.TrackingNumber</h2>
+
+<a href="/ShipmentTracking/AddTracking?trackingNumber=@ViewBag.TrackingNumber">
+    Hareket Ekle
+</a>
+
+<table border="1">
+    <tr>
+        <th>Tarih</th>
+        <th>Lokasyon</th>
+        <th>Açıklama</th>
+        <th>Durum</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.EventDate</td>
+            <td>@item.Location</td>
+            <td>@item.Description</td>
+            <td>@item.TrackingStatus</td>
+        </tr>
+    }
+</table>
+
+
+-----------------------------------------------------------------------------
+
+@model CreateShipmentTrackingDto
+
+<h2>Hareket Ekle - @ViewBag.TrackingNumber</h2>
+
+<form asp-action="AddTracking" asp-controller="ShipmentTracking" method="post">
+    <input type="hidden" asp-for="TrackingNumber" />
+
+    <div>
+        <label>Tarih</label>
+        <input type="datetime-local" asp-for="EventDate" />
+    </div>
+    <div>
+        <label>Lokasyon</label>
+        <input type="text" asp-for="Location" />
+    </div>
+    <div>
+        <label>Açıklama</label>
+        <input type="text" asp-for="Description" />
+    </div>
+    <div>
+        <label>Durum</label>
+        <select asp-for="TrackingStatus">
+            <option value="Gönderi Alındı">Gönderi Alındı</option>
+            <option value="Transfer Merkezinde">Transfer Merkezinde</option>
+            <option value="Yolda">Yolda</option>
+            <option value="Dağıtımda">Dağıtımda</option>
+            <option value="Teslim Edildi">Teslim Edildi</option>
+        </select>
+    </div>
+
+    <button type="submit">Kaydet</button>
+</form>

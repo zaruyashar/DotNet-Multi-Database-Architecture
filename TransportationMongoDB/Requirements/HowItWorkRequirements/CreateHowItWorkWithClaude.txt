@@ -1,0 +1,903 @@
+﻿@model CreateHowItWorkDto
+@{
+    ViewData["Title"] = "CreateHowItWork";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap');
+
+    :root {
+        --primary: #6B5CE0;
+        --primary-light: #8A7FEA;
+        --accent: #FFB84D;
+        --accent-light: #FFD085;
+        --success: #4ECDC4;
+        --pink: #FF6B9D;
+        --bg: #F8F9FD;
+        --card-bg: #FFFFFF;
+        --text: #2D3748;
+        --text-muted: #718096;
+        --border: #E2E8F0;
+        --shadow-sm: 0 2px 12px rgba(107, 92, 224, 0.08);
+        --shadow-md: 0 8px 24px rgba(107, 92, 224, 0.12);
+        --shadow-lg: 0 16px 40px rgba(107, 92, 224, 0.15);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Nunito', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        position: relative;
+    }
+
+    /* Soft Background Pattern */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(107, 92, 224, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 107, 157, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(78, 205, 196, 0.03) 0%, transparent 50%);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .howitwork-create-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 56px 32px;
+        position: relative;
+        z-index: 1;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(25px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Soft Header */
+    .page-header {
+        text-align: center;
+        margin-bottom: 56px;
+        position: relative;
+    }
+
+    .header-decoration {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .decoration-circle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .decoration-circle:nth-child(1) {
+        background: var(--primary);
+        animation-delay: 0s;
+    }
+
+    .decoration-circle:nth-child(2) {
+        background: var(--accent);
+        animation-delay: 0.2s;
+    }
+
+    .decoration-circle:nth-child(3) {
+        background: var(--pink);
+        animation-delay: 0.4s;
+    }
+
+    .decoration-circle:nth-child(4) {
+        background: var(--success);
+        animation-delay: 0.6s;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    .page-title {
+        font-size: 48px;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--primary), var(--pink));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 16px;
+        line-height: 1.2;
+    }
+
+    .page-subtitle {
+        font-size: 18px;
+        color: var(--text-muted);
+        font-weight: 600;
+        max-width: 600px;
+        margin: 0 auto;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    /* Split Layout */
+    .split-layout {
+        display: grid;
+        grid-template-columns: 1fr 420px;
+        gap: 48px;
+        animation: slideUp 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(35px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Form Column */
+    .form-column {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 28px;
+        padding: 40px;
+        box-shadow: var(--shadow-md);
+        border: 1px solid rgba(107, 92, 224, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--pink), var(--accent));
+    }
+
+    .card-title {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(107, 92, 224, 0.25);
+    }
+
+    .card-icon svg {
+        width: 22px;
+        height: 22px;
+        color: white;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 24px;
+        animation: fadeInUp 0.7s ease-out both;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.15s; }
+    .form-group:nth-child(3) { animation-delay: 0.2s; }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 10px;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    .label-required {
+        color: var(--pink);
+        margin-left: 4px;
+    }
+
+    .form-input,
+    .form-textarea {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 15px;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 600;
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        background: var(--bg);
+        color: var(--text);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(107, 92, 224, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 140px;
+        line-height: 1.7;
+    }
+
+    .input-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+    }
+
+    .input-hint {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+
+    .input-hint svg {
+        width: 14px;
+        height: 14px;
+        color: var(--primary);
+    }
+
+    .char-counter {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 700;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    /* Status Toggle */
+    .status-wrapper {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.08), rgba(78, 205, 196, 0.04));
+        border: 2px solid rgba(78, 205, 196, 0.2);
+        border-radius: 20px;
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .status-label h4 {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 6px;
+    }
+
+    .status-label p {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 64px;
+        height: 36px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--border);
+        border-radius: 34px;
+        transition: 0.4s;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 28px;
+        width: 28px;
+        left: 4px;
+        bottom: 4px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.4s;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+        background: linear-gradient(135deg, var(--success), #3DB8B0);
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(28px);
+    }
+
+    /* Preview Column */
+    .preview-column {
+        position: sticky;
+        top: 32px;
+        height: fit-content;
+    }
+
+    .preview-wrapper {
+        background: linear-gradient(135deg, var(--primary), var(--pink));
+        border-radius: 32px;
+        padding: 48px;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        animation: slideUp 0.8s ease-out 0.3s both;
+    }
+
+    .preview-wrapper::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .preview-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .preview-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 24px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    /* Timeline Preview */
+    .timeline-preview {
+        position: relative;
+    }
+
+    .timeline-step {
+        position: relative;
+        padding-left: 80px;
+        margin-bottom: 40px;
+        animation: fadeInLeft 0.8s ease-out both;
+    }
+
+    .timeline-step:nth-child(1) { animation-delay: 0.4s; }
+    .timeline-step:nth-child(2) { animation-delay: 0.5s; }
+    .timeline-step:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .timeline-step:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-step::before {
+        content: '';
+        position: absolute;
+        left: 28px;
+        top: 56px;
+        width: 2px;
+        height: calc(100% + 40px);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .timeline-step:last-child::before {
+        display: none;
+    }
+
+    .step-icon-wrapper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 56px;
+        height: 56px;
+        background: var(--accent);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 20px rgba(255, 184, 77, 0.4);
+        border: 4px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .step-icon-wrapper img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+    }
+
+    .step-icon-placeholder {
+        width: 28px;
+        height: 28px;
+        color: white;
+    }
+
+    .step-content {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 20px 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .step-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 8px;
+    }
+
+    .step-description {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+    }
+
+    /* Action Buttons */
+    .form-actions {
+        display: flex;
+        gap: 16px;
+        margin-top: 32px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 18px 32px;
+        font-size: 16px;
+        font-weight: 800;
+        border-radius: 16px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Nunito', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .btn span,
+    .btn svg {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--text);
+        border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        border-color: var(--primary);
+        background: var(--bg);
+    }
+
+    /* Info Box */
+    .info-box {
+        background: linear-gradient(135deg, rgba(255, 184, 77, 0.1), rgba(255, 184, 77, 0.05));
+        border: 2px solid rgba(255, 184, 77, 0.3);
+        border-radius: 20px;
+        padding: 24px;
+    }
+
+    .info-box-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-box-title svg {
+        width: 20px;
+        height: 20px;
+        color: var(--accent);
+    }
+
+    .info-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .info-list li {
+        display: flex;
+        align-items: start;
+        gap: 12px;
+        font-size: 14px;
+        color: var(--text-muted);
+        font-weight: 600;
+        line-height: 1.6;
+    }
+
+    .info-list li::before {
+        content: '✨';
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+        .split-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .preview-column {
+            position: relative;
+            top: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .howitwork-create-container {
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            font-size: 36px;
+        }
+
+        .form-card {
+            padding: 28px 24px;
+        }
+
+        .preview-wrapper {
+            padding: 32px 24px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+    }
+</style>
+
+<div class="howitwork-create-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-decoration">
+            <div class="decoration-circle"></div>
+            <div class="decoration-circle"></div>
+            <div class="decoration-circle"></div>
+            <div class="decoration-circle"></div>
+        </div>
+        <h1 class="page-title">Nasıl Çalışır Adımı Ekle</h1>
+        <p class="page-subtitle">Müşterilerinize süreç adımlarını göstermek için yeni bir adım oluşturun</p>
+    </div>
+
+    <!-- Split Layout -->
+    <form method="post" id="howItWorkForm">
+        <div class="split-layout">
+            <!-- Form Column -->
+            <div class="form-column">
+                <!-- Main Info Card -->
+                <div class="form-card">
+                    <h2 class="card-title">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        Adım Bilgileri
+                    </h2>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Title">
+                            Başlık <span class="label-required">*</span>
+                        </label>
+                        <input type="text" 
+                               class="form-input" 
+                               asp-for="Title" 
+                               id="titleInput"
+                               placeholder="Örn: Müşteri Sipariş Verir"
+                               maxlength="100"
+                               required />
+                        <div class="input-meta">
+                            <div class="input-hint">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                                Kısa ve net bir başlık yazın
+                            </div>
+                            <span class="char-counter">
+                                <span id="titleCounter">0</span>/100
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Description">
+                            Açıklama <span class="label-required">*</span>
+                        </label>
+                        <textarea class="form-textarea" 
+                                  asp-for="Description" 
+                                  id="descriptionInput"
+                                  placeholder="Bu adımın detaylı açıklamasını yazın..."
+                                  maxlength="300"
+                                  required></textarea>
+                        <div class="input-meta">
+                            <div class="input-hint">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Anlaşılır ve bilgilendirici olsun
+                            </div>
+                            <span class="char-counter">
+                                <span id="descCounter">0</span>/300
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="IconUrl">
+                            İkon URL <span class="label-required">*</span>
+                        </label>
+                        <input type="url" 
+                               class="form-input" 
+                               asp-for="IconUrl" 
+                               id="iconUrlInput"
+                               placeholder="https://example.com/icon.svg"
+                               required />
+                        <div class="input-meta">
+                            <div class="input-hint">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                SVG veya PNG formatında icon
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="status-wrapper">
+                            <div class="status-label">
+                                <h4>Aktif Durum</h4>
+                                <p>Adımı anında göster</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" asp-for="Status" id="statusToggle" checked />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="info-box">
+                    <h3 class="info-box-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        İpuçları
+                    </h3>
+                    <ul class="info-list">
+                        <li>Başlıklar eylem odaklı olmalı (Örn: "Müşteri Sipariş Verir")</li>
+                        <li>Açıklama net ve anlaşılır olmalı</li>
+                        <li>İkonlar adımı görsel olarak temsil etmeli</li>
+                        <li>Tüm adımlar mantıksal bir sıra izlemeli</li>
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <a href="/Admin/HowItWork/Index" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span>İptal</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Adımı Kaydet</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Column -->
+            <div class="preview-column">
+                <div class="preview-wrapper">
+                    <div class="preview-content">
+                        <div class="preview-label">Canlı Önizleme</div>
+                        <div class="timeline-preview">
+                            <div class="timeline-step">
+                                <div class="step-icon-wrapper">
+                                    <img src="" id="previewIcon1" style="display:none;" />
+                                    <svg class="step-icon-placeholder" id="iconPlaceholder1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                </div>
+                                <div class="step-content">
+                                    <h3 class="step-title" id="previewTitle">Başlık Giriniz</h3>
+                                    <p class="step-description" id="previewDescription">Açıklama burada görünecek...</p>
+                                </div>
+                            </div>
+
+                            <div class="timeline-step">
+                                <div class="step-icon-wrapper">
+                                    <svg class="step-icon-placeholder" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <div class="step-content">
+                                    <h3 class="step-title">Ödeme Başarılı</h3>
+                                    <p class="step-description">Müşteri güvenli ödeme işlemini tamamlar</p>
+                                </div>
+                            </div>
+
+                            <div class="timeline-step">
+                                <div class="step-icon-wrapper">
+                                    <svg class="step-icon-placeholder" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                    </svg>
+                                </div>
+                                <div class="step-content">
+                                    <h3 class="step-title">Teslimat</h3>
+                                    <p class="step-description">Paket adrese güvenle teslim edilir</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Character counters and preview
+    const titleInput = document.getElementById('titleInput');
+    const descriptionInput = document.getElementById('descriptionInput');
+    const iconUrlInput = document.getElementById('iconUrlInput');
+    
+    const titleCounter = document.getElementById('titleCounter');
+    const descCounter = document.getElementById('descCounter');
+    
+    const previewTitle = document.getElementById('previewTitle');
+    const previewDescription = document.getElementById('previewDescription');
+    const previewIcon1 = document.getElementById('previewIcon1');
+    const iconPlaceholder1 = document.getElementById('iconPlaceholder1');
+
+    // Update counters and preview
+    titleInput.addEventListener('input', (e) => {
+        titleCounter.textContent = e.target.value.length;
+        previewTitle.textContent = e.target.value || 'Başlık Giriniz';
+    });
+
+    descriptionInput.addEventListener('input', (e) => {
+        descCounter.textContent = e.target.value.length;
+        previewDescription.textContent = e.target.value || 'Açıklama burada görünecek...';
+    });
+
+    // Update preview icon
+    iconUrlInput.addEventListener('input', (e) => {
+        const url = e.target.value.trim();
+        if (url) {
+            previewIcon1.src = url;
+            previewIcon1.onload = () => {
+                previewIcon1.style.display = 'block';
+                iconPlaceholder1.style.display = 'none';
+            };
+            previewIcon1.onerror = () => {
+                previewIcon1.style.display = 'none';
+                iconPlaceholder1.style.display = 'block';
+            };
+        } else {
+            previewIcon1.style.display = 'none';
+            iconPlaceholder1.style.display = 'block';
+        }
+    });
+
+    // Form validation
+    const form = document.getElementById('howItWorkForm');
+    form.addEventListener('submit', (e) => {
+        const title = titleInput.value.trim();
+        const description = descriptionInput.value.trim();
+        const iconUrl = iconUrlInput.value.trim();
+
+        if (!title || !description || !iconUrl) {
+            e.preventDefault();
+            alert('Lütfen tüm zorunlu alanları doldurun!');
+            
+            if (!title) titleInput.style.borderColor = 'var(--pink)';
+            if (!description) descriptionInput.style.borderColor = 'var(--pink)';
+            if (!iconUrl) iconUrlInput.style.borderColor = 'var(--pink)';
+
+            setTimeout(() => {
+                titleInput.style.borderColor = '';
+                descriptionInput.style.borderColor = '';
+                iconUrlInput.style.borderColor = '';
+            }, 2000);
+        }
+    });
+</script>

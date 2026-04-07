@@ -1,4 +1,6 @@
-﻿namespace TransportationMongoDB.Dtos.SliderDtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TransportationMongoDB.Dtos.SliderDtos
 {
     public class CreateSliderDto
     {

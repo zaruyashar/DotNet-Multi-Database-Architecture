@@ -1,43 +1,30 @@
-﻿<section class="section d-block">
+﻿@model List<TransportationMongoDB.Dtos.SliderDtos.ResultSliderDto>
+
+<section class="section d-block">
     <div class="box-swiper">
         <div class="swiper-container swiper-group-1 swiper-banner-1">
             <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                    <div class="banner-1" style="background-image:url(/templates/assets/imgs/page/homepage1/banner.png)">
-                        <div class="container">
-                            <div class="row align-items-center">
-                                <div class="col-lg-12">
-                                    <p class="font-md color-white mb-15">Lojistikte Dijital Hız, Gerçek Güven</p>
-                                    <h1 class="color-white mb-25">Digital & Trusted Transport<br class="d-none d-lg-block">Logistic Company</h1>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="font-md color-white mb-20">Our experienced team of problem solvers and a commitment to always align with our client’s business goals and objectives is what drives mutual success.</p>
+                @foreach (var item in Model)
+                {
+                    <div class="swiper-slide">
+                        <div class="banner-1" style="background-image:url(@item.ImageUrl)">
+                            <div class="container">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-12">
+                                        <p class="font-md color-white mb-15">@item.Title</p>
+                                        <h1 class="color-white mb-25">@item.SubTitle<br class="d-none d-lg-block"></h1>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="font-md color-white mb-20">@item.Description</p>
+                                            </div>
                                         </div>
+                                        <div class="box-button mt-30"><a class="btn btn-brand-1-big hover-up mr-40" href="#">Kargo Hesapla</a><a class="btn btn-play popup-youtube hover-up" href="https://www.youtube.com/watch?v=kCGf5uNE13I"><img src="/templates/assets/imgs/template/icons/play.svg" alt="">Nasıl çalışır?</a></div>
                                     </div>
-                                    <div class="box-button mt-30"><a class="btn btn-brand-1-big hover-up mr-40" href="#">Calculate Package</a><a class="btn btn-play popup-youtube hover-up" href="https://www.youtube.com/watch?v=kCGf5uNE13I"><img src="/templates/assets/imgs/template/icons/play.svg" alt="">How it work ?</a></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="banner-1" style="background-image:url(/templates/assets/imgs/page/homepage1/banner-2.png)">
-                        <div class="container">
-                            <div class="row align-items-center">
-                                <div class="col-lg-12">
-                                    <p class="font-md color-white mb-15">Dünyayı Birleştirir, Mesafeleri Kısaltırız</p>
-                                    <h1 class="color-white mb-25">Digital & Trusted Transport<br class="d-none d-lg-block">Logistic Company</h1>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="font-md color-white mb-20">Our experienced team of problem solvers and a commitment to always align with our client’s business goals and objectives is what drives mutual success.</p>
-                                        </div>
-                                    </div>
-                                    <div class="box-button mt-30"><a class="btn btn-brand-1-big hover-up mr-40" href="#">Calculate Package</a><a class="btn btn-play popup-youtube hover-up" href="https://www.youtube.com/watch?v=kCGf5uNE13I"><img src="/templates/assets/imgs/template/icons/play.svg" alt="">How it work ?</a></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
             <div class="swiper-pagination swiper-pagination-banner"></div>
         </div>

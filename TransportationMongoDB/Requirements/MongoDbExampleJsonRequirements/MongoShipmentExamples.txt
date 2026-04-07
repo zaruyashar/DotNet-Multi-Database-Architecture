@@ -1,0 +1,65 @@
+﻿{
+  "TrackingNumber": "TRK-1001ABC",
+  "SenderName": "Gönderici-01",
+  "ReceiverName": "Alıcı-01",
+  "OriginCity": "İstanbul",
+  "OriginDistrict": "Kadıköy",
+  "DestinationCity": "Ankara",
+  "DestinationDistrict": "Çankaya",
+  "Address": "Anonim Mah. No:5",
+  "CreatedDate": "2026-02-18T08:00:00.000Z",
+  "CurrentStatus": "Transfer Merkezinde",
+  "Trackings": [
+    {
+      "EventDate": "2026-02-18T08:10:00.000Z",
+      "Location": "İstanbul/Kadıköy",
+      "Description": "Gönderi şubeden alındı.",
+      "TrackingStatus": "Gönderi Alındı"
+    },
+    {
+      "EventDate": "2026-02-18T12:30:00.000Z",
+      "Location": "İstanbul/Transfer",
+      "Description": "Transfer merkezine ulaştı.",
+      "TrackingStatus": "Transfer Merkezinde"
+    }
+  ]
+}
+
+
+-----------------------------------------------
+
+{
+  "TrackingNumber": "TRK-2002XYZ",
+  "SenderName": "Ahmet Yılmaz",
+  "ReceiverName": "Elif Demir",
+  "OriginCity": "İzmir",
+  "OriginDistrict": "Bornova",
+  "DestinationCity": "Bursa",
+  "DestinationDistrict": "Nilüfer",
+  "Address": "Ataevler Mah. Çiçek Sok. No:12",
+  "CreatedDate": "2026-02-18T09:30:00.000Z",
+  "CurrentStatus": "Dağıtıma Çıktı",
+  "Trackings": [
+    {
+      "EventDate": "2026-02-18T09:45:00.000Z",
+      "Location": "İzmir/Bornova",
+      "Description": "Gönderi şubeden teslim alındı.",
+      "TrackingStatus": "Gönderi Alındı"
+    },
+    {
+      "EventDate": "2026-02-18T13:10:00.000Z",
+      "Location": "İzmir/Transfer",
+      "Description": "Transfer merkezine ulaştı.",
+      "TrackingStatus": "Transfer Merkezinde"
+    },
+    {
+      "EventDate": "2026-02-18T18:00:00.000Z",
+      "Location": "Bursa/Nilüfer",
+      "Description": "Kurye dağıtıma çıktı.",
+      "TrackingStatus": "Dağıtıma Çıktı"
+    }
+  ]
+}
+
+----------------------------------------------------------
+

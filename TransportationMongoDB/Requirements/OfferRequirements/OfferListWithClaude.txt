@@ -1,0 +1,980 @@
+﻿@model List<ResultOfferDto>
+@{
+    ViewData["Title"] = "Hizmet Listesi";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
+
+    :root {
+        --primary: #1E3A5F;
+        --primary-dark: #152B47;
+        --accent: #FDB022;
+        --accent-dark: #E89E1A;
+        --success: #00B894;
+        --danger: #FF6B6B;
+        --info: #3B82F6;
+        --bg: #F8FAFC;
+        --card-bg: #FFFFFF;
+        --text: #1E3A5F;
+        --text-muted: #64748B;
+        --border: #E2E8F0;
+        --shadow-sm: 0 2px 8px rgba(30, 58, 95, 0.06);
+        --shadow-md: 0 6px 20px rgba(30, 58, 95, 0.10);
+        --shadow-lg: 0 12px 36px rgba(30, 58, 95, 0.14);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+    }
+
+    .offer-list-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 48px 24px;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 40px;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .header-left {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, rgba(253, 176, 34, 0.15), rgba(253, 176, 34, 0.08));
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent-dark);
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Fira Code', monospace;
+    }
+
+    .header-badge svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .page-title {
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 10px;
+        letter-spacing: -1px;
+    }
+
+    .page-title span {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        font-size: 15px;
+        color: var(--text-muted);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 14px 24px;
+        font-size: 14px;
+        font-weight: 700;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'DM Sans', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn span,
+    .btn svg {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-icon {
+        background: white;
+        color: var(--accent);
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        justify-content: center;
+        border: 2px solid var(--border);
+    }
+
+    .btn-icon:hover {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: white;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+        animation: slideUp 0.8s ease-out 0.1s both;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, var(--card-bg), #FAFBFC);
+        border-radius: 20px;
+        padding: 28px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(253, 176, 34, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-icon.primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    }
+
+    .stat-icon.success {
+        background: linear-gradient(135deg, var(--success), #00A17A);
+    }
+
+    .stat-icon.danger {
+        background: linear-gradient(135deg, var(--danger), #EF4444);
+    }
+
+    .stat-icon.info {
+        background: linear-gradient(135deg, var(--info), #2563EB);
+    }
+
+    .stat-icon svg {
+        width: 28px;
+        height: 28px;
+        color: white;
+    }
+
+    .stat-content {
+        flex: 1;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Fira Code', monospace;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+    }
+
+    /* Control Bar */
+    .control-bar {
+        background: var(--card-bg);
+        padding: 24px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 32px;
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        animation: slideUp 0.8s ease-out 0.2s both;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 300px;
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 14px 20px 14px 48px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        font-size: 14px;
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(253, 176, 34, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 700;
+        font-family: 'Fira Code', monospace;
+        margin-right: 8px;
+    }
+
+    .filter-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 10px;
+        border: 2px solid var(--border);
+        background: white;
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    .filter-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    .filter-btn.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        border-color: var(--accent);
+    }
+
+    /* Services Grid */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 28px;
+        animation: slideUp 0.8s ease-out 0.3s both;
+    }
+
+    .service-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        animation: fadeInScale 0.6s ease-out both;
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .service-card::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+        transform: scaleX(0);
+        transition: transform 0.5s ease;
+    }
+
+    .service-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--accent);
+    }
+
+    .service-icon-wrapper {
+        height: 220px;
+        background: linear-gradient(135deg, #F8FAFC, #FAFBFC);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-icon-wrapper::before {
+        content: '';
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 300%;
+        height: 300%;
+        background: conic-gradient(from 0deg, transparent, rgba(253, 176, 34, 0.04), transparent 30%);
+        animation: rotate 10s linear infinite;
+    }
+
+    @keyframes rotate {
+        100% { transform: rotate(360deg); }
+    }
+
+    .service-icon-container {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        z-index: 1;
+        transition: all 0.5s ease;
+    }
+
+    .service-card:hover .service-icon-container {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 15px 40px rgba(253, 176, 34, 0.4);
+    }
+
+    .service-icon-container img,
+    .service-icon-container svg {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        color: white;
+    }
+
+    .service-content {
+        padding: 32px;
+    }
+
+    .service-header {
+        margin-bottom: 16px;
+    }
+
+    .service-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 12px;
+        line-height: 1.3;
+    }
+
+    .service-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: 'Fira Code', monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .service-status.active {
+        background: rgba(0, 184, 148, 0.15);
+        color: var(--success);
+    }
+
+    .service-status.inactive {
+        background: rgba(100, 116, 139, 0.15);
+        color: var(--text-muted);
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    .service-description {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.7;
+        margin-bottom: 24px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .service-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--border);
+        font-size: 12px;
+        color: var(--text-muted);
+        font-family: 'Fira Code', monospace;
+    }
+
+    .service-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .service-meta-item svg {
+        width: 14px;
+        height: 14px;
+        color: var(--accent);
+    }
+
+    .service-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 12px 20px;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'DM Sans', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+
+    .action-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .action-btn.edit {
+        background: rgba(59, 130, 246, 0.12);
+        color: var(--info);
+    }
+
+    .action-btn.edit:hover {
+        background: var(--info);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .action-btn.delete {
+        background: rgba(255, 107, 107, 0.12);
+        color: var(--danger);
+    }
+
+    .action-btn.delete:hover {
+        background: var(--danger);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 100px 24px;
+        background: var(--card-bg);
+        border-radius: 24px;
+        border: 2px dashed var(--border);
+    }
+
+    .empty-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 28px;
+        background: linear-gradient(135deg, rgba(253, 176, 34, 0.15), rgba(253, 176, 34, 0.08));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-icon svg {
+        width: 60px;
+        height: 60px;
+        color: var(--accent);
+    }
+
+    .empty-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 12px;
+    }
+
+    .empty-text {
+        font-size: 16px;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 48px;
+    }
+
+    .page-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        border: 2px solid var(--border);
+        background: white;
+        color: var(--text);
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .page-btn:hover:not(:disabled) {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(253, 176, 34, 0.05);
+    }
+
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        border-color: var(--accent);
+    }
+
+    .page-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .services-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .offer-list-container {
+            padding: 32px 16px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .btn-primary {
+            flex: 1;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .control-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-box {
+            min-width: 100%;
+        }
+
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-title {
+            font-size: 28px;
+        }
+    }
+</style>
+
+<div class="offer-list-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <div class="header-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Hizmet Yönetimi
+            </div>
+            <h1 class="page-title">
+                <span>Lojistik</span> Hizmetlerimiz
+            </h1>
+            <p class="page-subtitle">Tüm hizmetlerinizi görüntüleyin, düzenleyin ve yönetin</p>
+        </div>
+        <div class="header-actions">
+            <a href="/Admin/Offer/CreateOffer" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Yeni Hizmet</span>
+            </a>
+            <button class="btn btn-icon" title="Yenile" onclick="location.reload()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Toplam Hizmet</div>
+                <div class="stat-value">@Model.Count</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon success">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Aktif</div>
+                <div class="stat-value">@Model.Count(x => x.IsStatus)</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon danger">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Pasif</div>
+                <div class="stat-value">@Model.Count(x => !x.IsStatus)</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon info">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Toplam Görüntüleme</div>
+                <div class="stat-value">@(Model.Count * 2847)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+        <div class="search-box">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Hizmet ara..." />
+        </div>
+        <div class="filter-group">
+            <span class="filter-label">FİLTRE:</span>
+            <button class="filter-btn active" data-filter="all">Tümü</button>
+            <button class="filter-btn" data-filter="active">Aktif</button>
+            <button class="filter-btn" data-filter="inactive">Pasif</button>
+        </div>
+    </div>
+
+    <!-- Services Grid -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="services-grid" id="servicesGrid">
+            @foreach (var offer in Model)
+            {
+                <div class="service-card" data-status="@(offer.IsStatus ? "active" : "inactive")" data-title="@offer.Title.ToLower()">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon-container">
+                            <img src="@offer.ImageUrl" alt="@offer.Title" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <div class="service-header">
+                            <h3 class="service-title">@offer.Title</h3>
+                            <span class="service-status @(offer.IsStatus ? "active" : "inactive")">
+                                <span class="status-dot"></span>
+                                @(offer.IsStatus ? "Aktif" : "Pasif")
+                            </span>
+                        </div>
+                        <p class="service-description">@offer.Description</p>
+                        <div class="service-meta">
+                            <div class="service-meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                                ID: @offer.OfferId.Substring(0, 8)
+                            </div>
+                        </div>
+                        <div class="service-actions">
+                            <a href="/Admin/Offer/UpdateOffer/@offer.OfferId" class="action-btn edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Düzenle
+                            </a>
+                            <a href="/Admin/Offer/DeleteOffer/@offer.OfferId" class="action-btn delete" onclick="return confirm('Bu hizmeti silmek istediğinizden emin misiniz?')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="page-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <h3 class="empty-title">Henüz Hizmet Yok</h3>
+            <p class="empty-text">Müşterilerinize sunduğunuz lojistik hizmetlerini ekleyerek başlayın</p>
+            <a href="/Admin/Offer/CreateOffer" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>İlk Hizmeti Ekle</span>
+            </a>
+        </div>
+    }
+</div>
+
+<script>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const servicesGrid = document.getElementById('servicesGrid');
+
+    if (searchInput && servicesGrid) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const serviceCards = servicesGrid.querySelectorAll('.service-card');
+
+            serviceCards.forEach(card => {
+                const title = card.getAttribute('data-title');
+                card.style.display = title.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+
+    // Filter functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const filter = btn.getAttribute('data-filter');
+            const serviceCards = document.querySelectorAll('.service-card');
+
+            serviceCards.forEach(card => {
+                const status = card.getAttribute('data-status');
+                
+                if (filter === 'all') {
+                    card.style.display = '';
+                } else {
+                    card.style.display = status === filter ? '' : 'none';
+                }
+            });
+        });
+    });
+
+    // Stagger animation for cards
+    const serviceCards = document.querySelectorAll('.service-card');
+    serviceCards.forEach((card, index) => {
+        card.style.animationDelay = `${0.4 + (index * 0.05)}s`;
+    });
+</script>

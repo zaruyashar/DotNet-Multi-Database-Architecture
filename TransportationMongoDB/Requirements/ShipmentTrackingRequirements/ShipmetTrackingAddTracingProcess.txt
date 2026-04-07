@@ -1,0 +1,25 @@
+﻿
+
+
+.action-btn.tracking {
+    color: var(--success);
+    border-color: rgba(22, 163, 74, 0.3);
+}
+
+.action-btn.tracking:hover {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+}
+
+---------------------------------------------------------------------------------------------------------
+
+
+ <!-- ✅ Yeni buton -->
+    <a asp-controller="ShipmentTracking"
+       asp-action="Index"
+       asp-route-trackingNumber="@shipment.TrackingNumber"
+       class="action-btn tracking"
+       data-tooltip="Hareketler">
+        <i class="bi bi-clock-history"></i>
+    </a>

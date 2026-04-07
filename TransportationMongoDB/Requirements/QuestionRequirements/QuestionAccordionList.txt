@@ -1,0 +1,74 @@
+﻿@model List<ResultQuestionDto>
+
+<section class="section pt-80 mb-70 bg-faqs">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box-faqs-left">
+                    <h2 class="title-favicon mb-20">Sık Sorulan Sorular</h2>
+                    <p class="font-md color-grey-700 mb-50">Feeling inquisitive? Have a read through some of our FAQs or contact our supporters for help</p>
+                    <div class="box-gallery-faqs">
+                        <div class="image-top"> <img src="/templates/assets/imgs/page/homepage1/img-faq1.png" alt="transp"></div>
+                        <div class="image-bottom">
+                            <div class="image-faq-1"> <img src="/templates/assets/imgs/page/homepage1/img-faq2.png" alt="transp"></div>
+                            <div class="image-faq-2"> <img src="/templates/assets/imgs/page/homepage1/img-faq3.png" alt="transp"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="box-accordion">
+                    <div class="accordion" id="accordionFAQ">
+                        @if (Model != null && Model.Any())
+                        {
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+                                var item = Model[i];
+                                var headingId = "heading" + item.QuestionId;
+                                var collapseId = "collapse" + item.QuestionId;
+                                var isFirst = i == 0;
+
+                                <div class="accordion-item">
+                                    <h5 class="accordion-header" id="@headingId">
+                                        <button class="accordion-button text-heading-5 @(isFirst ? "" : "collapsed")" 
+                                                type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#@collapseId" 
+                                                aria-expanded="@(isFirst ? "true" : "false")" 
+                                                aria-controls="@collapseId">
+                                            @item.Title
+                                        </button>
+                                    </h5>
+                                    <div class="accordion-collapse collapse @(isFirst ? "show" : "")" 
+                                         id="@collapseId" 
+                                         aria-labelledby="@headingId" 
+                                         data-bs-parent="#accordionFAQ">
+                                        <div class="accordion-body">
+                                            @item.Description
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                Henüz soru bulunmamaktadır.
+                            </div>
+                        }
+                    </div>
+                    <div class="line-border mt-50 mb-50"></div>
+                    <h3 class="color-brand-2">Nead more help?</h3>
+                    <div class="mt-20">
+                        <a class="btn btn-brand-1-big mr-20" href="contact.html">Contact Us</a><a class="btn btn-link-medium" href="#">
+                            Learn More
+                            <svg class="w-6 h-6 icon-16 ml-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

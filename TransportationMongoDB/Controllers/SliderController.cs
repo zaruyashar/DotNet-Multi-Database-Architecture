@@ -50,7 +50,6 @@ namespace TransportationMongoDB.Controllers
         {
             await _sliderService.UpdateSliderAsync(updateSliderDto);
             return RedirectToAction("SliderList");
-            return RedirectToAction("SliderList");
         }
     }
 }

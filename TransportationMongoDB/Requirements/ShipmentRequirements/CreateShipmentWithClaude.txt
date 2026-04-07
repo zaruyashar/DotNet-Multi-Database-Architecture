@@ -1,0 +1,871 @@
+﻿@model CreateShipmentDto
+@{
+    ViewData["Title"] = "CreateShipment";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root {
+        --primary: #0A4D68;
+        --primary-light: #05668D;
+        --secondary: #FDB022;
+        --accent: #088395;
+        --success: #16a34a;
+        --danger: #dc2626;
+        --warning: #f59e0b;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --border: #e2e8f0;
+        --card-bg: #ffffff;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--light);
+        color: var(--dark);
+    }
+
+    .shipment-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 32px;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header Section */
+    .page-header {
+        margin-bottom: 32px;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .breadcrumb {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .breadcrumb a {
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .breadcrumb a:hover {
+        color: var(--secondary);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--dark);
+    }
+
+    .btn-icon:hover {
+        background: var(--light);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .page-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .title-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+    }
+
+    .page-subtitle {
+        font-size: 15px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    /* Main Grid */
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 24px;
+        animation: slideUp 0.5s ease-out 0.1s both;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Form Column */
+    .form-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-section {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 28px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s;
+    }
+
+    .form-section:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--light);
+    }
+
+    .section-number {
+        width: 32px;
+        height: 32px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-grid.full {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .label-required {
+        color: var(--danger);
+    }
+
+    .label-icon {
+        font-size: 14px;
+        color: var(--primary);
+    }
+
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        color: var(--dark);
+        background: white;
+        transition: all 0.2s;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(10, 77, 104, 0.1);
+    }
+
+    .tracking-input {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .input-hint {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* Info Card */
+    .info-card {
+        background: linear-gradient(135deg, rgba(253, 176, 34, 0.1), rgba(253, 176, 34, 0.05));
+        border: 1.5px solid rgba(253, 176, 34, 0.3);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .info-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--secondary);
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 6px;
+    }
+
+    .info-text {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    /* Preview Column */
+    .preview-column {
+        position: sticky;
+        top: 24px;
+        height: fit-content;
+    }
+
+    .preview-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 28px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+        animation: slideUp 0.5s ease-out 0.2s both;
+    }
+
+    .preview-header {
+        text-align: center;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--light);
+    }
+
+    .preview-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+    }
+
+    .shipment-card {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 12px;
+        padding: 24px;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .tracking-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 1px;
+    }
+
+    .tracking-number-display {
+        font-size: 20px;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 2px;
+        margin-bottom: 16px;
+    }
+
+    .route-display {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .route-arrow {
+        font-size: 16px;
+    }
+
+    .preview-details {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .preview-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background: var(--light);
+        border-radius: 8px;
+    }
+
+    .preview-item-label {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .preview-item-value {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    .status-preview {
+        display: inline-block;
+        padding: 4px 12px;
+        background: var(--success);
+        color: white;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* Actions */
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 14px 24px;
+        border-radius: 10px;
+        border: none;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        background: var(--light);
+        border-color: var(--primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .preview-column {
+            position: relative;
+            top: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .shipment-container {
+            padding: 24px 16px;
+        }
+
+        .page-title {
+            font-size: 24px;
+        }
+
+        .form-section {
+            padding: 20px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+    }
+</style>
+
+<div class="shipment-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-top">
+            <div class="breadcrumb">
+                <a href="/Admin/Dashboard">
+                    <i class="bi bi-house-door"></i> Ana Sayfa
+                </a>
+                <i class="bi bi-chevron-right"></i>
+                <a href="/Admin/Shipment/Index">Gönderiler</a>
+                <i class="bi bi-chevron-right"></i>
+                <span>Yeni Gönderi</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" title="Yardım">
+                    <i class="bi bi-question-circle"></i>
+                </button>
+                <button class="btn-icon" title="Ayarlar">
+                    <i class="bi bi-gear"></i>
+                </button>
+            </div>
+        </div>
+        <h1 class="page-title">
+            <div class="title-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            Yeni Kargo Gönderi Oluştur
+        </h1>
+        <p class="page-subtitle">Gönderi bilgilerini girerek yeni bir kargo kaydı oluşturun</p>
+    </div>
+
+    <!-- Main Grid -->
+    <form method="post" id="shipmentForm">
+        <div class="main-grid">
+            <!-- Form Column -->
+            <div class="form-column">
+                <!-- Tracking Info Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <div class="section-title">Takip Bilgileri</div>
+                    </div>
+
+                    <div class="form-grid full">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-upc-scan label-icon"></i>
+                                Takip Numarası
+                                <span class="label-required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-input tracking-input" 
+                                asp-for="TrackingNumber"
+                                id="trackingInput"
+                                placeholder="TRK-" 
+                                maxlength="50"
+                                required 
+                            />
+                            <div class="input-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Otomatik oluşturulmaktadır (TRK-XXXXXXXX)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sender & Receiver Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <div class="section-title">Gönderici ve Alıcı Bilgileri</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-person label-icon"></i>
+                                Gönderici Adı
+                                <span class="label-required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-input" 
+                                asp-for="SenderName"
+                                id="senderInput"
+                                placeholder="Örn: Ahmet Yılmaz" 
+                                maxlength="100"
+                                required 
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-person-check label-icon"></i>
+                                Alıcı Adı
+                                <span class="label-required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-input" 
+                                asp-for="ReceiverName"
+                                id="receiverInput"
+                                placeholder="Örn: Mehmet Demir" 
+                                maxlength="100"
+                                required 
+                            />
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <i class="bi bi-shield-check info-icon"></i>
+                        <div class="info-content">
+                            <div class="info-title">Güvenlik Notu</div>
+                            <div class="info-text">
+                                Gönderici ve alıcı bilgileri gizlilik politikası kapsamında korunmaktadır.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <div class="section-title">Lokasyon Bilgileri</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-geo-alt label-icon"></i>
+                                Çıkış Şehri
+                                <span class="label-required">*</span>
+                            </label>
+                            <select 
+                                class="form-select" 
+                                asp-for="OriginCity"
+                                id="originInput"
+                                required
+                            >
+                                <option value="">Şehir Seçiniz</option>
+                                <option value="İstanbul">İstanbul</option>
+                                <option value="Ankara">Ankara</option>
+                                <option value="İzmir">İzmir</option>
+                                <option value="Bursa">Bursa</option>
+                                <option value="Antalya">Antalya</option>
+                                <option value="Adana">Adana</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-pin-map label-icon"></i>
+                                Varış Şehri
+                                <span class="label-required">*</span>
+                            </label>
+                            <select 
+                                class="form-select" 
+                                asp-for="DestinationCity"
+                                id="destinationInput"
+                                required
+                            >
+                                <option value="">Şehir Seçiniz</option>
+                                <option value="İstanbul">İstanbul</option>
+                                <option value="Ankara">Ankara</option>
+                                <option value="İzmir">İzmir</option>
+                                <option value="Bursa">Bursa</option>
+                                <option value="Antalya">Antalya</option>
+                                <option value="Adana">Adana</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <div class="section-title">Durum Bilgileri</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-calendar-event label-icon"></i>
+                                Oluşturulma Tarihi
+                                <span class="label-required">*</span>
+                            </label>
+                            <input 
+                                type="datetime-local" 
+                                class="form-input" 
+                                asp-for="CreatedDate"
+                                id="dateInput"
+                                required 
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-flag label-icon"></i>
+                                Güncel Durum
+                                <span class="label-required">*</span>
+                            </label>
+                            <select 
+                                class="form-select" 
+                                asp-for="CurrentStatus"
+                                id="statusInput"
+                                required
+                            >
+                                <option value="">Durum Seçiniz</option>
+                                <option value="Gönderi Alındı">Gönderi Alındı</option>
+                                <option value="Transfer Merkezinde">Transfer Merkezinde</option>
+                                <option value="Yolda">Yolda</option>
+                                <option value="Dağıtımda">Dağıtımda</option>
+                                <option value="Teslim Edildi">Teslim Edildi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <a href="/Admin/Shipment/Index" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i>
+                        İptal
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i>
+                        Gönderiyi Kaydet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Column -->
+            <div class="preview-column">
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <div class="preview-label">
+                            <i class="bi bi-eye"></i> Canlı Önizleme
+                        </div>
+                    </div>
+
+                    <div class="shipment-card">
+                        <div class="tracking-badge">TRACKING NUMBER</div>
+                        <div class="tracking-number-display" id="previewTracking">TRK-XXXXXXXX</div>
+                        <div class="route-display">
+                            <span id="previewOrigin">Çıkış</span>
+                            <span class="route-arrow">→</span>
+                            <span id="previewDestination">Varış</span>
+                        </div>
+                    </div>
+
+                    <div class="preview-details">
+                        <div class="preview-item">
+                            <span class="preview-item-label">Gönderici</span>
+                            <span class="preview-item-value" id="previewSender">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-item-label">Alıcı</span>
+                            <span class="preview-item-value" id="previewReceiver">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-item-label">Oluşturma</span>
+                            <span class="preview-item-value" id="previewDate">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-item-label">Durum</span>
+                            <span class="status-preview" id="previewStatus">Bekliyor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Auto-generate tracking number on page load
+    function generateTrackingNumber() {
+        const prefix = 'TRK-';
+        const random = Math.random().toString(36).substring(2, 10).toUpperCase();
+        return prefix + random;
+    }
+
+    // Set default date to now
+    function setDefaultDate() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const adjustedDate = new Date(now.getTime() - offset * 60 * 1000);
+        const dateString = adjustedDate.toISOString().slice(0, 16);
+        document.getElementById('dateInput').value = dateString;
+    }
+
+    // Initialize on page load
+    window.addEventListener('load', function() {
+        const trackingInput = document.getElementById('trackingInput');
+        if (!trackingInput.value) {
+            trackingInput.value = generateTrackingNumber();
+            document.getElementById('previewTracking').textContent = trackingInput.value;
+        }
+        setDefaultDate();
+    });
+
+    // Preview updates
+    const trackingInput = document.getElementById('trackingInput');
+    const senderInput = document.getElementById('senderInput');
+    const receiverInput = document.getElementById('receiverInput');
+    const originInput = document.getElementById('originInput');
+    const destinationInput = document.getElementById('destinationInput');
+    const dateInput = document.getElementById('dateInput');
+    const statusInput = document.getElementById('statusInput');
+
+    trackingInput?.addEventListener('input', (e) => {
+        document.getElementById('previewTracking').textContent = e.target.value || 'TRK-XXXXXXXX';
+    });
+
+    senderInput?.addEventListener('input', (e) => {
+        document.getElementById('previewSender').textContent = e.target.value || '-';
+    });
+
+    receiverInput?.addEventListener('input', (e) => {
+        document.getElementById('previewReceiver').textContent = e.target.value || '-';
+    });
+
+    originInput?.addEventListener('change', (e) => {
+        document.getElementById('previewOrigin').textContent = e.target.value || 'Çıkış';
+    });
+
+    destinationInput?.addEventListener('change', (e) => {
+        document.getElementById('previewDestination').textContent = e.target.value || 'Varış';
+    });
+
+    dateInput?.addEventListener('change', (e) => {
+        if (e.target.value) {
+            const date = new Date(e.target.value);
+            const formatted = date.toLocaleDateString('tr-TR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('previewDate').textContent = formatted;
+        }
+    });
+
+    statusInput?.addEventListener('change', (e) => {
+        document.getElementById('previewStatus').textContent = e.target.value || 'Bekliyor';
+    });
+
+    // Form validation
+    document.getElementById('shipmentForm')?.addEventListener('submit', (e) => {
+        const tracking = trackingInput.value.trim();
+        const sender = senderInput.value.trim();
+        const receiver = receiverInput.value.trim();
+        const origin = originInput.value;
+        const destination = destinationInput.value;
+        const status = statusInput.value;
+
+        if (!tracking || !sender || !receiver || !origin || !destination || !status) {
+            e.preventDefault();
+            alert('Lütfen tüm zorunlu alanları doldurun!');
+            return false;
+        }
+
+        if (origin === destination) {
+            e.preventDefault();
+            alert('Çıkış ve varış şehri aynı olamaz!');
+            return false;
+        }
+    });
+</script>

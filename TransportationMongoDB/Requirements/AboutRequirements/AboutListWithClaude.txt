@@ -1,0 +1,933 @@
+﻿@model List<ResultAboutDto>
+@{
+    ViewData["Title"] = "Hakkımızda Listesi";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+    :root {
+        --dark: #0F172A;
+        --dark-light: #1E293B;
+        --accent: #10B981;
+        --accent-dark: #059669;
+        --secondary: #3B82F6;
+        --warning: #F59E0B;
+        --danger: #EF4444;
+        --bg: #F8FAFC;
+        --card-bg: #FFFFFF;
+        --text: #0F172A;
+        --text-muted: #64748B;
+        --border: #E2E8F0;
+        --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+        --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.12);
+        --shadow-lg: 0 8px 32px rgba(15, 23, 42, 0.16);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Archivo', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+    }
+
+    /* Diagonal Background */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            linear-gradient(135deg, transparent 48%, rgba(16, 185, 129, 0.03) 49%, rgba(16, 185, 129, 0.03) 51%, transparent 52%);
+        background-size: 60px 60px;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .about-list-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 56px 32px;
+        position: relative;
+        z-index: 1;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 48px;
+        gap: 32px;
+        flex-wrap: wrap;
+    }
+
+    .header-left {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .header-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .header-line {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent), transparent);
+        border-radius: 2px;
+    }
+
+    .header-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .page-title {
+        font-size: 42px;
+        font-weight: 900;
+        color: var(--dark);
+        margin-bottom: 12px;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+    }
+
+    .title-highlight {
+        position: relative;
+        display: inline-block;
+    }
+
+    .title-highlight::after {
+        content: '';
+        position: absolute;
+        bottom: 6px;
+        left: 0;
+        right: 0;
+        height: 14px;
+        background: linear-gradient(90deg, rgba(16, 185, 129, 0.3), transparent);
+        z-index: -1;
+    }
+
+    .page-subtitle {
+        font-size: 16px;
+        color: var(--text-muted);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 16px 28px;
+        font-size: 15px;
+        font-weight: 800;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Archivo', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn span,
+    .btn svg {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-icon {
+        background: white;
+        color: var(--accent);
+        width: 48px;
+        height: 48px;
+        padding: 0;
+        justify-content: center;
+        border: 3px solid var(--border);
+    }
+
+    .btn-icon:hover {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: white;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+        background: linear-gradient(135deg, var(--dark), var(--dark-light));
+        border-radius: 24px;
+        padding: 36px 48px;
+        margin-bottom: 48px;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        animation: slideUp 0.8s ease-out 0.1s both;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-bar::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+        animation: float 10s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(-30px, 30px); }
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 0 20px;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-item:last-child {
+        border-right: none;
+    }
+
+    .stat-value {
+        font-size: 48px;
+        font-weight: 900;
+        color: white;
+        line-height: 1;
+        margin-bottom: 8px;
+        font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-family: 'IBM Plex Mono', monospace;
+    }
+
+    /* Control Bar */
+    .control-bar {
+        background: var(--card-bg);
+        padding: 24px 32px;
+        border-radius: 20px;
+        border: 3px solid var(--border);
+        box-shadow: var(--shadow-md);
+        margin-bottom: 40px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+        animation: slideUp 0.8s ease-out 0.2s both;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 320px;
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 16px 24px 16px 56px;
+        border: 3px solid var(--border);
+        border-radius: 14px;
+        font-size: 15px;
+        font-family: 'Archivo', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: white;
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 22px;
+        height: 22px;
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .view-toggle {
+        display: flex;
+        gap: 6px;
+        background: var(--bg);
+        padding: 6px;
+        border-radius: 12px;
+        border: 3px solid var(--border);
+    }
+
+    .view-btn {
+        width: 44px;
+        height: 44px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .view-btn:hover {
+        background: white;
+        color: var(--accent);
+    }
+
+    .view-btn.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .view-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Content Grid */
+    .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 32px;
+        animation: slideUp 0.8s ease-out 0.3s both;
+    }
+
+    .about-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        border: 3px solid var(--border);
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        animation: fadeInScale 0.6s ease-out both;
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .about-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+        transform: scaleY(0);
+        transition: transform 0.5s ease;
+    }
+
+    .about-card:hover::before {
+        transform: scaleY(1);
+    }
+
+    .about-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--accent);
+    }
+
+    .card-image-wrapper {
+        height: 300px;
+        background: linear-gradient(135deg, var(--bg), #FAFBFC);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-image-wrapper::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.4) 100%);
+        z-index: 1;
+    }
+
+    .card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .about-card:hover .card-image {
+        transform: scale(1.08);
+    }
+
+    .card-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: 'IBM Plex Mono', monospace;
+        z-index: 2;
+        box-shadow: var(--shadow-md);
+    }
+
+    .card-content {
+        padding: 36px;
+    }
+
+    .card-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: var(--dark);
+        margin-bottom: 16px;
+        line-height: 1.3;
+        letter-spacing: -0.5px;
+    }
+
+    .card-description {
+        font-size: 15px;
+        color: var(--text-muted);
+        line-height: 1.8;
+        margin-bottom: 28px;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-top: 24px;
+        margin-top: 24px;
+        border-top: 3px solid var(--border);
+        font-size: 12px;
+        color: var(--text-muted);
+        font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .card-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+    }
+
+    .card-meta-item svg {
+        width: 16px;
+        height: 16px;
+        color: var(--accent);
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 14px 20px;
+        font-size: 13px;
+        font-weight: 800;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Archivo', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .action-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .action-btn.edit {
+        background: rgba(59, 130, 246, 0.12);
+        color: var(--secondary);
+        border: 2px solid transparent;
+    }
+
+    .action-btn.edit:hover {
+        background: var(--secondary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .action-btn.delete {
+        background: rgba(239, 68, 68, 0.12);
+        color: var(--danger);
+        border: 2px solid transparent;
+    }
+
+    .action-btn.delete:hover {
+        background: var(--danger);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 120px 40px;
+        background: var(--card-bg);
+        border-radius: 28px;
+        border: 3px dashed var(--border);
+    }
+
+    .empty-icon {
+        width: 140px;
+        height: 140px;
+        margin: 0 auto 32px;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-icon svg {
+        width: 70px;
+        height: 70px;
+        color: var(--accent);
+    }
+
+    .empty-title {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--dark);
+        margin-bottom: 16px;
+        letter-spacing: -1px;
+    }
+
+    .empty-text {
+        font-size: 17px;
+        color: var(--text-muted);
+        margin-bottom: 36px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.7;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-top: 56px;
+    }
+
+    .page-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        border: 3px solid var(--border);
+        background: white;
+        color: var(--text);
+        font-weight: 800;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .page-btn:hover:not(:disabled) {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(16, 185, 129, 0.05);
+    }
+
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        border-color: var(--accent);
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .page-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .content-grid {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .about-list-container {
+            padding: 32px 20px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .page-title {
+            font-size: 32px;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .btn-primary {
+            flex: 1;
+        }
+
+        .stats-bar {
+            padding: 28px 24px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .stat-item {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0 0 24px 0;
+        }
+
+        .stat-item:nth-last-child(-n+2) {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .control-bar {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 20px;
+        }
+
+        .search-box {
+            min-width: 100%;
+        }
+
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-item {
+            padding: 0 0 20px 0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+    }
+</style>
+
+<div class="about-list-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <div class="header-top">
+                <div class="header-line"></div>
+                <span class="header-label">HAKKIMIZDA YÖNETİMİ</span>
+            </div>
+            <h1 class="page-title">
+                <span class="title-highlight">Kurumsal</span> İçerikler
+            </h1>
+            <p class="page-subtitle">Firmanızın hikayesini ve değerlerini yönetin</p>
+        </div>
+        <div class="header-actions">
+            <a href="/Admin/About/CreateAbout" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Yeni Ekle</span>
+            </a>
+            <button class="btn btn-icon" title="Yenile" onclick="location.reload()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">@Model.Count</div>
+                <div class="stat-label">Toplam İçerik</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">@(Model.Count * 3284)</div>
+                <div class="stat-label">Görüntülenme</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">@(Model.Any() ? Model.First().Title.Length : 0)</div>
+                <div class="stat-label">Ort. Başlık Uzunluğu</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">%@(Model.Any() ? 98 : 0)</div>
+                <div class="stat-label">Okuma Oranı</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+        <div class="search-box">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="İçerik ara..." />
+        </div>
+        <div class="view-toggle">
+            <button class="view-btn active" data-view="grid" title="Grid Görünüm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+            <button class="view-btn" data-view="list" title="Liste Görünüm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="content-grid" id="contentGrid">
+            @foreach (var about in Model)
+            {
+                <div class="about-card" data-title="@about.Title.ToLower()">
+                    <div class="card-image-wrapper">
+                        <img src="@about.ImageUrl" alt="@about.Title" class="card-image" />
+                        <div class="card-badge">HAKKIMIZDA</div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">@about.Title</h3>
+                        <p class="card-description">@about.Description</p>
+                        
+                        <div class="card-meta">
+                            <div class="card-meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                                ID: @about.AboutId.Substring(0, 8)
+                            </div>
+                            <div class="card-meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                @((about.Description.Length * 28)) Görüntüleme
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="/Admin/About/UpdateAbout/@about.AboutId" class="action-btn edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Düzenle
+                            </a>
+                            <a href="/Admin/About/DeleteAbout/@about.AboutId" class="action-btn delete" onclick="return confirm('Bu içeriği silmek istediğinizden emin misiniz?')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="page-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <h3 class="empty-title">Henüz İçerik Yok</h3>
+            <p class="empty-text">Firmanızın hikayesini ve değerlerini paylaşmak için ilk hakkımızda içeriğinizi oluşturun</p>
+            <a href="/Admin/About/CreateAbout" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>İlk İçeriği Oluştur</span>
+            </a>
+        </div>
+    }
+</div>
+
+<script>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const contentGrid = document.getElementById('contentGrid');
+
+    if (searchInput && contentGrid) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = contentGrid.querySelectorAll('.about-card');
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title');
+                card.style.display = title.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+
+    // View toggle
+    const viewButtons = document.querySelectorAll('.view-btn');
+    
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            viewButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const view = btn.getAttribute('data-view');
+            
+            if (view === 'list') {
+                console.log('List view - to be implemented');
+            }
+        });
+    });
+
+    // Stagger animation for cards
+    const aboutCards = document.querySelectorAll('.about-card');
+    aboutCards.forEach((card, index) => {
+        card.style.animationDelay = `${0.4 + (index * 0.06)}s`;
+    });
+</script>
