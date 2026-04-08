@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
+using DatabaseMastery.TransportMongoDb.Entities;
+using TransportationMongoDB.Dtos.AboutDtos;
 using TransportationMongoDB.Dtos.BrandDtos;
+using TransportationMongoDB.Dtos.GetInTouchDtos;
+using TransportationMongoDB.Dtos.HowItWorkDtos;
 using TransportationMongoDB.Dtos.OfferDtos;
 using TransportationMongoDB.Dtos.SliderDtos;
 using TransportationMongoDB.Entities;
@@ -24,6 +28,22 @@ namespace TransportationMongoDB.Mapping
             CreateMap<Offer, CreateOfferDto>().ReverseMap();
             CreateMap<Offer, UpdateOfferDto>().ReverseMap();
             CreateMap<Offer, GetOfferByIdDto>().ReverseMap();
+
+            CreateMap<About, ResultAboutDto>().ReverseMap();
+            CreateMap<About, CreateAboutDto>().ReverseMap();
+            CreateMap<About, UpdateAboutDto>().ReverseMap();
+            CreateMap<About, GetAboutByIdDto>().ReverseMap();
+
+            CreateMap<GetInTouch, ResultGetInTouchDto>().ReverseMap();
+            CreateMap<GetInTouch, CreateGetInTouchDto>().ReverseMap();
+            CreateMap<GetInTouch, UpdateGetInTouchDto>().ReverseMap();
+            CreateMap<GetInTouch, GetInTouchByIdDto>().ReverseMap();
+
+
+            CreateMap<HowItWork, ResultHowItWorkDto>().ReverseMap();
+            CreateMap<HowItWork, CreateHowItWorkDto>().ReverseMap();
+            CreateMap<HowItWork, UpdateHowItWorkDto>().ReverseMap();
+            CreateMap<HowItWork, GetHowItWorkByIdDto>().ReverseMap();
         }
     }
 }

@@ -1,12 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TransportationMongoDB.Services.AboutServices;
 
 namespace TransportationMongoDB.ViewComponents.DefaultComponents
 {
     public class _DefaultAboutComponentPartial : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        private readonly IAboutService _aboutService;
+
+        public _DefaultAboutComponentPartial(IAboutService AboutService)
         {
-            return View();
+            _aboutService = AboutService;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            var values = await _aboutService.GetAllAboutsAsync();
+            return View(values);
         }
     }
 }

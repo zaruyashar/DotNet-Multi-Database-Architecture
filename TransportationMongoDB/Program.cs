@@ -1,6 +1,9 @@
+using DatabaseMastery.TransportMongoDb.Services.HowItWorkServices;
 using Microsoft.Extensions.Options;
 using System.Reflection;
+using TransportationMongoDB.Services.AboutServices;
 using TransportationMongoDB.Services.BrandServices;
+using TransportationMongoDB.Services.GetInTouchService;
 using TransportationMongoDB.Services.OfferServices;
 using TransportationMongoDB.Services.SliderServices;
 using TransportationMongoDB.Settings;
@@ -10,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ISliderService, SliderService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<IAboutService, AboutService>();
+builder.Services.AddScoped<IGetInTouchService, GetInTouchService>();
+builder.Services.AddScoped<IHowItWorkService, HowItWorkService>();
 
 
 builder.Services.AddAutoMapper(cfg =>

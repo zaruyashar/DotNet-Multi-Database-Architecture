@@ -1,12 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DatabaseMastery.TransportMongoDb.Services.HowItWorkServices;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TransportationMongoDB.ViewComponents.DefaultComponents
 {
     public class _DefaultHowItWorksComponentPartial : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        private readonly IHowItWorkService _howItWorkService;
+        public _DefaultHowItWorksComponentPartial(IHowItWorkService HowItWorkService)
         {
-            return View();
+            _howItWorkService = HowItWorkService;
+        }
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            var values = await _howItWorkService.GetAllHowItWorkAsync();
+            return View(values);
         }
     }
 }

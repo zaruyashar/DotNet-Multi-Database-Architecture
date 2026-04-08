@@ -1,4 +1,6 @@
-﻿<section class="section mt-85">
+﻿@model List<ResultAboutDto>
+
+<section class="section mt-85">
     <div class="container">
         <div class="text-center">
             <img class="mb-15" src="/templates/assets/imgs/template/icons/favicon.svg" alt="transp">
@@ -16,8 +18,13 @@
             </div>
             <div class="col-xl-5 col-lg-6 mb-30">
                 <div class="box-info-pround">
-                    <h3 class="color-brand-2 mb-15">En modern teknoloji ile hızlı kargo</h3>
-                    <p class="font-md color-grey-500">Yıllar boyunca, güvenilirlik ve tutarlılık sağlamak amacıyla ortak ağımızı genişletmek için birlikte çalıştık. Ayrıca, teknolojiyi süreçlerimize sıkı bir şekilde entegre etme konusunda önemli adımlar atarak müşterilerimize her aşamada daha fazla şeffaflık sunduk.</p>
+
+                    @foreach(var item in Model)
+                    {
+                        <h3 class="color-brand-2 mb-15">@item.Title</h3>
+                        <p class="@item.Description"/>
+                    }
+
                     <div class="mt-30">
                         <ul class="list-ticks">
                             <li>
