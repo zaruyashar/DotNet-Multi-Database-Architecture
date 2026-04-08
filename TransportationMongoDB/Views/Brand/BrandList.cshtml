@@ -1,8 +1,1108 @@
-﻿
+﻿@model List<ResultBrandDto>
+
 @{
     ViewData["Title"] = "BrandList";
     Layout = "~/Views/AdminLayout/Index.cshtml";
 }
 
-<h1>BrandList</h1>
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    :root {
+        --dark: #1A1D29;
+        --dark-light: #252836;
+        --accent: #6C5DD3;
+        --accent-hover: #5B4CC4;
+        --success: #0FCA7A;
+        --warning: #FFB648;
+        --danger: #FF6B6B;
+        --info: #3B82F6;
+        --bg: #F5F6FA;
+        --card-bg: #FFFFFF;
+        --text: #1A1D29;
+        --text-muted: #6B7280;
+        --border: #E5E7EB;
+        --shadow-sm: 0 1px 3px rgba(26, 29, 41, 0.06);
+        --shadow-md: 0 4px 12px rgba(26, 29, 41, 0.08);
+        --shadow-lg: 0 10px 30px rgba(26, 29, 41, 0.12);
+        --shadow-xl: 0 20px 50px rgba(26, 29, 41, 0.15);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 48%, rgba(108, 93, 211, 0.02) 49%, rgba(108, 93, 211, 0.02) 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, rgba(108, 93, 211, 0.02) 49%, rgba(108, 93, 211, 0.02) 51%, transparent 52%);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+    .brand-list-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 24px;
+        position: relative;
+        z-index: 1;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header Section */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 32px;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .header-left {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        font-size: 13px;
+        color: var(--text-muted);
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+        .breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .breadcrumb a:hover {
+                color: var(--accent-hover);
+            }
+
+    .breadcrumb-separator {
+        color: var(--border);
+    }
+
+    .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .header-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-lg);
+        flex-shrink: 0;
+    }
+
+        .header-icon svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+
+    .header-text h1 {
+        font-size: 28px;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--dark), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 6px;
+        letter-spacing: -0.5px;
+    }
+
+    .header-text p {
+        font-size: 14px;
+        color: var(--text-muted);
+        font-weight: 400;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 14px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Poppins', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        white-space: nowrap;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span,
+        .btn svg {
+            position: relative;
+            z-index: 1;
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+    .btn-icon {
+        background: white;
+        color: var(--accent);
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        justify-content: center;
+        border: 2px solid var(--border);
+    }
+
+        .btn-icon:hover {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: white;
+        }
+
+    /* Stats Section */
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, var(--card-bg), #FAFBFC);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        animation: slideUp 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+
+        .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.25s;
+        }
+
+    @@keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(108, 93, 211, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-sm);
+    }
+
+        .stat-icon.primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, var(--success), #0DB76A);
+        }
+
+        .stat-icon.warning {
+            background: linear-gradient(135deg, var(--warning), #F59E0B);
+        }
+
+        .stat-icon.danger {
+            background: linear-gradient(135deg, var(--danger), #EF4444);
+        }
+
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+    .stat-content {
+        flex: 1;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'JetBrains Mono', monospace;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+
+    .stat-value {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--dark);
+        line-height: 1;
+    }
+
+    /* Control Bar */
+    .control-bar {
+        background: var(--card-bg);
+        padding: 20px 24px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 28px;
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        animation: slideUp 0.5s ease-out 0.3s;
+        animation-fill-mode: both;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 280px;
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 16px 12px 44px;
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        transition: all 0.3s ease;
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(108, 93, 211, 0.08);
+        }
+
+    .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 600;
+        font-family: 'JetBrains Mono', monospace;
+        margin-right: 4px;
+    }
+
+    .filter-btn {
+        padding: 10px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 2px solid var(--border);
+        background: white;
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: white;
+            border-color: var(--accent);
+        }
+
+    /* View Toggle */
+    .view-toggle {
+        display: flex;
+        gap: 4px;
+        background: var(--bg);
+        padding: 4px;
+        border-radius: 10px;
+    }
+
+    .view-btn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+        .view-btn:hover {
+            background: white;
+            color: var(--accent);
+        }
+
+        .view-btn.active {
+            background: white;
+            color: var(--accent);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .view-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+    /* Brand Grid */
+    .brands-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+        animation: slideUp 0.6s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .brand-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        animation: fadeInScale 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+
+    @@keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .brand-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--accent);
+    }
+
+    .brand-logo-container {
+        height: 200px;
+        background: linear-gradient(135deg, var(--bg), #FAFBFC);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .brand-logo-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(108, 93, 211, 0.03), transparent 30%);
+            animation: rotate 8s linear infinite;
+        }
+
+    @@keyframes rotate {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .brand-logo {
+        max-width: 140px;
+        max-height: 140px;
+        object-fit: contain;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+        transition: all 0.4s ease;
+    }
+
+    .brand-card:hover .brand-logo {
+        transform: scale(1.1);
+    }
+
+    .brand-content {
+        padding: 24px;
+    }
+
+    .brand-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .brand-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: 'JetBrains Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        flex-shrink: 0;
+    }
+
+        .brand-status.active {
+            background: rgba(15, 202, 122, 0.1);
+            color: var(--success);
+        }
+
+        .brand-status.inactive {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--text-muted);
+        }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: blink 2s ease-in-out infinite;
+    }
+
+    @@keyframes blink {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.3;
+        }
+    }
+
+    .brand-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .brand-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+        .brand-meta-item svg {
+            width: 14px;
+            height: 14px;
+            color: var(--accent);
+        }
+
+    .brand-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+
+        .action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .action-btn.edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+            .action-btn.edit:hover {
+                background: var(--info);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-sm);
+            }
+
+        .action-btn.delete {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--danger);
+        }
+
+            .action-btn.delete:hover {
+                background: var(--danger);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-sm);
+            }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 24px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        border: 2px dashed var(--border);
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .empty-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 24px;
+        background: linear-gradient(135deg, rgba(108, 93, 211, 0.1), rgba(108, 93, 211, 0.05));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .empty-icon svg {
+            width: 50px;
+            height: 50px;
+            color: var(--accent);
+        }
+
+    .empty-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 12px;
+    }
+
+    .empty-text {
+        font-size: 15px;
+        color: var(--text-muted);
+        margin-bottom: 28px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Pagination */
+    .pagination-wrapper {
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 2px solid var(--border);
+        background: white;
+        color: var(--text);
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(108, 93, 211, 0.05);
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+    /* Responsive */
+    @@media (max-width: 1200px) {
+        .brands-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .brand-list-container {
+            padding: 24px 16px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .btn-primary {
+            flex: 1;
+        }
+
+        .stats-section {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .control-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-box {
+            min-width: 100%;
+        }
+
+        .filter-group {
+            flex-wrap: wrap;
+        }
+
+        .brands-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .stats-section {
+            grid-template-columns: 1fr;
+        }
+
+        .header-text h1 {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="brand-list-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <div class="breadcrumb">
+                <a href="/Admin/Dashboard">Dashboard</a>
+                <span class="breadcrumb-separator">›</span>
+                <span>Markalar</span>
+            </div>
+            <div class="header-title-group">
+                <div class="header-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                </div>
+                <div class="header-text">
+                    <h1>Marka Yönetimi</h1>
+                    <p>Anlaşmalı markalarınızı görüntüleyin ve yönetin</p>
+                </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="/Brand/CreateBrand" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Yeni Marka</span>
+            </a>
+            <button class="btn btn-icon" title="Yenile" onclick="location.reload()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-icon primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Toplam Marka</div>
+                <div class="stat-value">@Model.Count</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon success">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Aktif</div>
+                <div class="stat-value">@Model.Count(x => x.IsStatus)</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon danger">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Pasif</div>
+                <div class="stat-value">@Model.Count(x => !x.IsStatus)</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon warning">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Bu Ay Eklenen</div>
+                <div class="stat-value">@(Model.Count >= 3 ? 3 : Model.Count)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+        <div class="search-box">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Marka ara..." />
+        </div>
+        <div class="filter-group">
+            <span class="filter-label">Filtre:</span>
+            <button class="filter-btn active" data-filter="all">Tümü</button>
+            <button class="filter-btn" data-filter="active">Aktif</button>
+            <button class="filter-btn" data-filter="inactive">Pasif</button>
+        </div>
+        <div class="view-toggle">
+            <button class="view-btn active" data-view="grid" title="Grid Görünüm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+            <button class="view-btn" data-view="list" title="Liste Görünüm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Brands Grid -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="brands-grid" id="brandsGrid">
+            @foreach (var brand in Model)
+            {
+                <div class="brand-card" data-status="@(brand.IsStatus ? "active" : "inactive")" data-name="@brand.BrandName.ToLower()">
+                    <div class="brand-logo-container">
+                        <img src="@brand.ImageUrl" alt="@brand.BrandName" class="brand-logo" />
+                    </div>
+                    <div class="brand-content">
+                        <div class="brand-name">
+                            <span>@brand.BrandName</span>
+                            <span class="brand-status @(brand.IsStatus ? "active" : "inactive")">
+                                <span class="status-dot"></span>
+                                @(brand.IsStatus ? "Aktif" : "Pasif")
+                            </span>
+                        </div>
+                        <div class="brand-meta">
+                            <div class="brand-meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                                ID: @brand.BrandId.Substring(0, 8)
+                            </div>
+                        </div>
+                        <div class="brand-actions">
+                            <a href="/Brand/UpdateBrand/@brand.BrandId" class="action-btn edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Düzenle
+                            </a>
+                            <a href="/Brand/DeleteBrand/@brand.BrandId" class="action-btn delete" onclick="return confirm('Bu markayı silmek istediğinizden emin misiniz?')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper">
+            <button class="page-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+            </div>
+            <h3 class="empty-title">Henüz Marka Yok</h3>
+            <p class="empty-text">Anlaşmalı firmalarınızı ekleyerek başlayın ve marka portföyünüzü oluşturun</p>
+            <a href="/Admin/Brand/CreateBrand" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>İlk Markayı Ekle</span>
+            </a>
+        </div>
+    }
+</div>
+
+<script>
+    // Search Functionality
+    const searchInput = document.getElementById('searchInput');
+    const brandsGrid = document.getElementById('brandsGrid');
+
+    if (searchInput && brandsGrid) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const brandCards = brandsGrid.querySelectorAll('.brand-card');
+
+            brandCards.forEach(card => {
+                const brandName = card.getAttribute('data-name');
+                card.style.display = brandName.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+
+    // Filter Functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.getAttribute('data-filter');
+            const brandCards = document.querySelectorAll('.brand-card');
+
+            brandCards.forEach(card => {
+                const status = card.getAttribute('data-status');
+
+                if (filter === 'all') {
+                    card.style.display = '';
+                } else {
+                    card.style.display = status === filter ? '' : 'none';
+                }
+            });
+        });
+    });
+
+    // View Toggle
+    const viewButtons = document.querySelectorAll('.view-btn');
+
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            viewButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const view = btn.getAttribute('data-view');
+
+            if (view === 'list') {
+                // You can implement list view here if needed
+                console.log('List view - to be implemented');
+            }
+        });
+    });
+
+    // Stagger animation for cards
+    const brandCards = document.querySelectorAll('.brand-card');
+    brandCards.forEach((card, index) => {
+        card.style.animationDelay = `${0.5 + (index * 0.05)}s`;
+    });
+</script>
+
 

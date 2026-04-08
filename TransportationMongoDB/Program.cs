@@ -1,23 +1,29 @@
 using Microsoft.Extensions.Options;
 using System.Reflection;
+using TransportationMongoDB.Services.BrandServices;
+using TransportationMongoDB.Services.OfferServices;
 using TransportationMongoDB.Services.SliderServices;
 using TransportationMongoDB.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ISliderService, SliderService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+
 
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddMaps(typeof(Program).Assembly);
 });
 
-builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 
+builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.AddScoped<IDatabaseSettings>(sp =>
 {
     return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
 });
+
 
 builder.Services.AddControllersWithViews();
 

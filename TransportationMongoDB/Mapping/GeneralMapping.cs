@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TransportationMongoDB.Dtos.BrandDtos;
+using TransportationMongoDB.Dtos.OfferDtos;
 using TransportationMongoDB.Dtos.SliderDtos;
 using TransportationMongoDB.Entities;
 
@@ -18,6 +19,11 @@ namespace TransportationMongoDB.Mapping
             CreateMap<Brand, CreateBrandDto>().ReverseMap();
             CreateMap<Brand, UpdateBrandDto>().ReverseMap();
             CreateMap<Brand, GetBrandByIdDto>().ReverseMap();
+
+            CreateMap<Offer, ResultOfferDto>().ReverseMap();
+            CreateMap<Offer, CreateOfferDto>().ReverseMap();
+            CreateMap<Offer, UpdateOfferDto>().ReverseMap();
+            CreateMap<Offer, GetOfferByIdDto>().ReverseMap();
         }
     }
 }

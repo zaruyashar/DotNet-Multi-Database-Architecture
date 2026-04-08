@@ -1,4 +1,6 @@
-﻿<div class="section bg-2 pt-65 pb-35">
+﻿@model List<ResultBrandDto>
+
+<div class="section bg-2 pt-65 pb-35">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-3 mb-30 text-center text-lg-start">
@@ -8,12 +10,10 @@
                 <div class="box-swiper">
                     <div class="swiper-container swiper-group-6 pb-0">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide"><img src="/templates/assets/imgs/slider/logo/alea.png" alt="transp"></div>
-                            <div class="swiper-slide"><img src="/templates/assets/imgs/slider/logo/land.png" alt="transp"></div>
-                            <div class="swiper-slide"><img src="/templates/assets/imgs/slider/logo/logis.png" alt="transp"></div>
-                            <div class="swiper-slide"><img src="/templates/assets/imgs/slider/logo/truck.png" alt="transp"></div>
-                            <div class="swiper-slide"><img src="/templates/assets/imgs/slider/logo/saltos.png" alt="transp"></div>
-                            <div class="swiper-slide"><img src="/templates/assets/imgs/slider/logo/creati.png" alt="transp"></div>
+                            @foreach(var item in Model)
+                            {
+                                <div class="swiper-slide"><img src="@item.ImageUrl" alt="transp"></div>
+                            }
                         </div>
                     </div>
                 </div>
