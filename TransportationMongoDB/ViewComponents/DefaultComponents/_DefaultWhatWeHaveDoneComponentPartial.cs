@@ -1,12 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TransportationMongoDB.Services.ProjectSectionServices;
 
 namespace TransportationMongoDB.ViewComponents.DefaultComponents
 {
     public class _DefaultWhatWeHaveDoneComponentPartial : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        private readonly IProjectSectionService _projectSectionService;
+
+        public _DefaultWhatWeHaveDoneComponentPartial(IProjectSectionService ProjectSectionService)
         {
-            return View();
+            _projectSectionService = ProjectSectionService;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            var values = await _projectSectionService.GetAllProjectSectionsAsync();
+            return View(values);
         }
     }
 }

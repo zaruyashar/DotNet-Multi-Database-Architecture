@@ -1,4 +1,6 @@
-﻿<section class="section bg-what-done pb-95 pt-110">
+﻿@model List<ResultProjectSectionDto>
+
+<section class="section bg-what-done pb-95 pt-110">
     <div class="container">
         <h2 class="title-favicon mb-20">Neler Yaptık</h2>
         <div class="row align-items-end">
@@ -17,93 +19,42 @@
             <div class="box-swiper">
                 <div class="swiper-container swiper-group-4 pb-50">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="cardGrid">
-                                <div class="cardImage"> <img src="/templates/assets/imgs/page/homepage1/img.png" alt="transp"></div>
-                                <div class="cardInfo">
-                                    <h5 class="color-brand-2 mb-10">Hava Yolu ile Taşımacılık</h5>
-                                    <p class="font-xs color-grey-500">Uluslararası standartlarda, hızlı ve güvenilir hava kargo hizmetlerimizle acil gönderilerinizi dünyanın her noktasına zamanında ve sorunsuz bir şekilde ulaştırıyoruz.</p>
-                                    <div class="box-button mt-30">
-                                        <a class="btn btn-link font-sm color-brand-2">
-                                            Detayları İncele<span>
-                                            <svg class="w-6 h-6 icon-16" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                            </svg>
-                                        </span>
-                                    </a>
+                        @foreach (var item in Model)
+                        {
+                            <div class="swiper-slide">
+                                <div class="cardGrid">
+                                    <div class="cardImage"> <img src="@item.ImageUrl" alt="transp"></div>
+                                    <div class="cardInfo">
+                                        <h5 class="color-brand-2 mb-10">@item.Title</h5>
+                                        <p class="font-xs color-grey-500">@item.Description</p>
+                                        <div class="box-button mt-30">
+                                            <a class="btn btn-link font-sm color-brand-2">
+                                                Detayları İncele<span>
+                                                <svg class="w-6 h-6 icon-16" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                                </svg>
+                                            </span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="cardGrid">
-                            <div class="cardImage"> <img src="/templates/assets/imgs/page/homepage1/img2.png" alt="transp"></div>
-                            <div class="cardInfo">
-                                <h5 class="color-brand-2 mb-10">Deniz Yolu ile Taşımacılık</h5>
-                                <p class="font-xs color-grey-500">Büyük hacimli yükleriniz için okyanus ötesi rotalarda uygun maliyetli, güvenli ve düzenli gemi seferleriyle esnek deniz yolu lojistik çözümleri sunuyoruz.</p>
-                                <div class="box-button mt-30">
-                                    <a class="btn btn-link font-sm color-brand-2">
-                                        Detayları İncele<span>
-                                        <svg class="w-6 h-6 icon-16" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                        </svg>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
-                <div class="swiper-slide">
-                    <div class="cardGrid">
-                        <div class="cardImage"> <img src="/templates/assets/imgs/page/homepage1/img3.png" alt="transp"></div>
-                        <div class="cardInfo">
-                            <h5 class="color-brand-2 mb-10">Kara Yolu ile Taşımacılık</h5>
-                            <p class="font-xs color-grey-500">Geniş araç filomuz ve deneyimli sürücülerimiz ile karayolu ağında kapıdan kapıya, güvenli ve programınıza tam uyumlu taşıma hizmetleri gerçekleştiriyoruz.</p>
-                            <div class="box-button mt-30">
-                                <a class="btn btn-link font-sm color-brand-2">
-                                    Detayları İncele<span>
-                                    <svg class="w-6 h-6 icon-16" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                    </svg>
-                                </span>
-                            </a>
-                        </div>
+                <div class="box-pagination-customers text-center">
+                    <div class="swiper-button-prev swiper-button-prev-style-1 swiper-button-prev-group-4">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
+                        </svg>
                     </div>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="cardGrid">
-                    <div class="cardImage"> <img src="/templates/assets/imgs/page/homepage1/img4.png" alt="transp"></div>
-                    <div class="cardInfo">
-                        <h5 class="color-brand-2 mb-10">Depolama</h5>
-                        <p class="font-xs color-grey-500">Modern teknolojiyle donatılmış, yüksek güvenlikli tesislerimizde envanter yönetimi, paketleme ve dağıtım süreçlerinizi optimize eden kapsamlı çözümler sağlıyoruz.</p>
-                        <div class="box-button mt-30">
-                            <a class="btn btn-link font-sm color-brand-2">
-                                Detayları İncele<span>
-                                <svg class="w-6 h-6 icon-16" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                </svg>
-                            </span>
-                        </a>
+                    <div class="swiper-button-next swiper-button-next-style-1 swiper-button-next-group-4">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+                        </svg>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="box-pagination-customers text-center">
-        <div class="swiper-button-prev swiper-button-prev-style-1 swiper-button-prev-group-4">
-            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
-            </svg>
-        </div>
-        <div class="swiper-button-next swiper-button-next-style-1 swiper-button-next-group-4">
-            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
-            </svg>
-        </div>
-    </div>
-</div>
-</div>
-</div>
 </div>
 </section>

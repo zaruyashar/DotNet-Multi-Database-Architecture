@@ -5,7 +5,10 @@ using TransportationMongoDB.Dtos.BrandDtos;
 using TransportationMongoDB.Dtos.GetInTouchDtos;
 using TransportationMongoDB.Dtos.HowItWorkDtos;
 using TransportationMongoDB.Dtos.OfferDtos;
+using TransportationMongoDB.Dtos.ProjectSectionDtos;
+using TransportationMongoDB.Dtos.QuestionDtos;
 using TransportationMongoDB.Dtos.SliderDtos;
+using TransportationMongoDB.Dtos.TestimonialDtos;
 using TransportationMongoDB.Entities;
 
 namespace TransportationMongoDB.Mapping
@@ -44,6 +47,21 @@ namespace TransportationMongoDB.Mapping
             CreateMap<HowItWork, CreateHowItWorkDto>().ReverseMap();
             CreateMap<HowItWork, UpdateHowItWorkDto>().ReverseMap();
             CreateMap<HowItWork, GetHowItWorkByIdDto>().ReverseMap();
+
+            CreateMap<Testimonial, ResultTestimonialDto>().ReverseMap();
+            CreateMap<Testimonial, CreateTestimonialDto>().ReverseMap();
+            CreateMap<Testimonial, UpdateTestimonialDto>().ReverseMap();
+            CreateMap<Testimonial, GetTestimonialByIdDto>().ReverseMap();
+
+            CreateMap<ProjectSection, ResultProjectSectionDto>().ReverseMap();
+            CreateMap<ProjectSection, CreateProjectSectionDto>().ReverseMap();
+            CreateMap<ProjectSection, UpdateProjectSectionDto>().ReverseMap();
+            CreateMap<ProjectSection, GetProjectSectionByIdDto>().ReverseMap();
+
+            CreateMap<Question, ResultQuestionDto>().ReverseMap();
+            CreateMap<Question, CreateQuestionDto>().ReverseMap();
+            CreateMap<Question, UpdateQuestionDto>().ReverseMap();
+            CreateMap<Question, GetQuestionByIdDto>().ReverseMap();
         }
     }
 }
