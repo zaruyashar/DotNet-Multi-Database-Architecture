@@ -28,6 +28,8 @@
     </div>
 
     @await Component.InvokeAsync("_AdminLayoutScriptsComponentPartial")
+
+    @await RenderSectionAsync("Scripts", required: false)
     
 </body>
 </html>

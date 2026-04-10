@@ -1,0 +1,417 @@
+﻿@using TransportationMongoDB.Dtos.ShipmentTrackingDtos
+@model List<ResultShipmentTrackingDto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root {
+        --primary: #0A4D68;
+        --accent: #088395;
+        --secondary: #FDB022;
+        --success: #16a34a;
+        --danger: #dc2626;
+        --warning: #f59e0b;
+        --info: #3b82f6;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --border: #e2e8f0;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+        --shadow-lg: 0 10px 32px rgba(0,0,0,0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--dark); }
+
+    .page-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 32px;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @@keyframes slideDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+    @@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.3); } }
+
+    /* Header */
+    .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; gap: 20px; flex-wrap: wrap; }
+
+    .breadcrumb { display: flex; gap: 8px; align-items: center; font-size: 13px; color: #64748b; font-weight: 500; margin-bottom: 14px; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--secondary); }
+
+    .page-title { font-size: 28px; font-weight: 800; color: var(--dark); margin-bottom: 6px; display: flex; align-items: center; gap: 14px; }
+
+    .title-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; }
+
+    .page-subtitle { font-size: 14px; color: #64748b; font-weight: 500; }
+
+    .header-actions { display: flex; gap: 12px; align-items: center; }
+
+    .btn { padding: 11px 20px; border-radius: 10px; border: none; font-size: 13px; font-weight: 700; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; white-space: nowrap; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: var(--shadow-md); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .btn-outline { background: white; color: var(--primary); border: 1.5px solid var(--primary); }
+    .btn-outline:hover { background: var(--primary); color: white; }
+
+    /* Banner */
+    .shipment-banner { background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 16px; padding: 20px 28px; margin-bottom: 28px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; animation: slideDown 0.4s ease-out 0.1s both; position: relative; overflow: hidden; }
+    .shipment-banner::before { content: ''; position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+    .banner-tracking-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .banner-tracking-number { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: white; letter-spacing: 2px; }
+    .banner-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.2); }
+    .banner-info { display: flex; gap: 32px; flex-wrap: wrap; }
+    .banner-info-item { display: flex; flex-direction: column; gap: 4px; }
+    .banner-info-label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .banner-info-value { font-size: 14px; color: white; font-weight: 600; }
+    .banner-status { margin-left: auto; }
+    .banner-status-badge { padding: 8px 18px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; font-size: 13px; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px; }
+    .banner-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--secondary); animation: pulse 2s infinite; }
+
+    /* Stats */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; animation: slideUp 0.4s ease-out 0.15s both; }
+    .stat-card { background: white; border-radius: 14px; padding: 20px; border: 1px solid var(--border); display: flex; align-items: center; gap: 14px; transition: all 0.3s; }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .stat-label { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 4px; }
+    .stat-value { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--dark); }
+
+    /* Main Grid */
+    .main-grid { display: grid; grid-template-columns: 1fr 280px; gap: 24px; animation: slideUp 0.4s ease-out 0.2s both; }
+
+    /* Timeline Card */
+    .timeline-card { background: white; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; }
+    .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--light); }
+    .card-header-left { display: flex; align-items: center; gap: 10px; }
+    .card-header-title { font-size: 15px; font-weight: 700; color: var(--dark); }
+    .card-header-count { padding: 3px 10px; background: var(--primary); color: white; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .card-body { padding: 28px; }
+
+    /* Timeline */
+    .timeline { display: flex; flex-direction: column; }
+    .tl-item { display: flex; gap: 16px; padding-bottom: 28px; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-item:last-child .tl-line { display: none; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 40px; }
+    .tl-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; transition: transform 0.2s; }
+    .tl-item:hover .tl-dot { transform: scale(1.1); }
+    .tl-line { width: 2px; flex: 1; min-height: 20px; margin-top: 6px; border-left: 2px dashed var(--border); }
+    .tl-content { flex: 1; background: var(--light); border-radius: 12px; padding: 16px 20px; border: 1px solid var(--border); transition: all 0.2s; }
+    .tl-item:hover .tl-content { box-shadow: var(--shadow-md); border-color: transparent; transform: translateX(4px); }
+    .tl-item:first-child .tl-content { border-color: var(--primary); background: rgba(10,77,104,0.03); }
+    .tl-latest-badge { display: inline-block; padding: 2px 10px; background: var(--primary); color: white; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .tl-content-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 12px; }
+    .tl-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .tl-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tl-action-btn { width: 30px; height: 30px; border-radius: 8px; border: 1.5px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 13px; text-decoration: none; color: var(--dark); position: relative; }
+    .tl-action-btn::before { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); padding: 4px 10px; background: var(--dark); color: white; font-size: 11px; font-weight: 600; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .tl-action-btn:hover::before { opacity: 1; }
+    .tl-action-btn:hover { transform: translateY(-2px); }
+    .tl-action-btn.edit:hover { background: var(--primary); border-color: var(--primary); color: white; }
+    .tl-action-btn.delete:hover { background: var(--danger); border-color: var(--danger); color: white; }
+    .tl-location { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+    .tl-location i { color: var(--primary); font-size: 13px; }
+    .tl-desc { font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 10px; }
+    .tl-date { font-size: 12px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 5px; }
+
+    .dot-received  { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+    .dot-transfer  { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .dot-transit   { background: rgba(8,131,149,0.15);  color: #088395; }
+    .dot-delivery  { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .dot-delivered { background: rgba(22,163,74,0.15);  color: #16a34a; }
+    .badge-received  { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+    .badge-transfer  { background: rgba(59,130,246,0.1); color: #3b82f6; }
+    .badge-transit   { background: rgba(8,131,149,0.1);  color: #088395; }
+    .badge-delivery  { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .badge-delivered { background: rgba(22,163,74,0.1);  color: #16a34a; }
+
+    /* Side */
+    .side-column { display: flex; flex-direction: column; gap: 16px; }
+    .side-card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+    .side-card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--light); font-size: 13px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+    .side-card-header i { color: var(--primary); }
+    .side-card-body { padding: 16px; }
+    .status-summary { display: flex; flex-direction: column; gap: 10px; }
+    .status-summary-item { display: flex; align-items: center; justify-content: space-between; }
+    .status-summary-left { display: flex; align-items: center; gap: 8px; }
+    .status-dot-sm { width: 10px; height: 10px; border-radius: 50%; }
+    .status-summary-name { font-size: 12px; font-weight: 600; color: var(--dark); }
+    .status-summary-count { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+    /* Empty */
+    .empty-state { text-align: center; padding: 60px 24px; }
+    .empty-icon { width: 72px; height: 72px; margin: 0 auto 20px; background: var(--light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #94a3b8; }
+    .empty-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .empty-text { font-size: 14px; color: #64748b; margin-bottom: 24px; }
+
+    @@media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    @@media (max-width: 768px) { .page-container { padding: 24px 16px; } .page-title { font-size: 22px; } .shipment-banner { flex-direction: column; align-items: flex-start; } .banner-status { margin-left: 0; } .page-header { flex-direction: column; } }
+</style>
+
+@{
+    string GetDotClass(string status) => status switch
+    {
+        "Gönderi Alındı"      => "received",
+        "Transfer Merkezinde" => "transfer",
+        "Yolda"               => "transit",
+        "Dağıtımda"           => "delivery",
+        "Teslim Edildi"       => "delivered",
+        _                     => "transit"
+    };
+
+    string GetStatusIcon(string status) => status switch
+    {
+        "Gönderi Alındı"      => "bi-box-seam",
+        "Transfer Merkezinde" => "bi-building",
+        "Yolda"               => "bi-truck",
+        "Dağıtımda"           => "bi-bicycle",
+        "Teslim Edildi"       => "bi-check-circle-fill",
+        _                     => "bi-circle"
+    };
+
+    var statuses = new[]
+    {
+        ("Gönderi Alındı",      "#8b5cf6"),
+        ("Transfer Merkezinde", "#3b82f6"),
+        ("Yolda",               "#088395"),
+        ("Dağıtımda",           "#f59e0b"),
+        ("Teslim Edildi",       "#16a34a")
+    };
+}
+
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <div class="breadcrumb">
+                <a asp-controller="Dashboard" asp-action="Index">
+                    <i class="bi bi-house-door"></i> Ana Sayfa
+                </a>
+                <i class="bi bi-chevron-right"></i>
+                <a asp-controller="Shipment" asp-action="Index">Gönderiler</a>
+                <i class="bi bi-chevron-right"></i>
+                <span>@ViewBag.TrackingNumber — Hareketler</span>
+            </div>
+            <h1 class="page-title">
+                <div class="title-icon"><i class="bi bi-clock-history"></i></div>
+                Kargo Hareketleri
+            </h1>
+            <p class="page-subtitle">
+                <span style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--primary);">
+                    @ViewBag.TrackingNumber
+                </span>
+                numaralı kargonun hareket geçmişi
+            </p>
+        </div>
+        <div class="header-actions">
+            <a asp-controller="Shipment" asp-action="Index" class="btn btn-outline">
+                <i class="bi bi-arrow-left"></i> Geri Dön
+            </a>
+            <a asp-controller="ShipmentTracking"
+               asp-action="AddTracking"
+               asp-route-trackingNumber="@ViewBag.TrackingNumber"
+               class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Hareket Ekle
+            </a>
+        </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="shipment-banner">
+        <div>
+            <div class="banner-tracking-label">Takip Numarası</div>
+            <div class="banner-tracking-number">@ViewBag.TrackingNumber</div>
+        </div>
+        <div class="banner-divider"></div>
+        <div class="banner-info">
+            <div class="banner-info-item">
+                <span class="banner-info-label">Gönderici</span>
+                <span class="banner-info-value">@ViewBag.SenderName</span>
+            </div>
+            <div class="banner-info-item">
+                <span class="banner-info-label">Alıcı</span>
+                <span class="banner-info-value">@ViewBag.ReceiverName</span>
+            </div>
+            <div class="banner-info-item">
+                <span class="banner-info-label">Rota</span>
+                <span class="banner-info-value">@ViewBag.OriginCity → @ViewBag.DestinationCity</span>
+            </div>
+        </div>
+        <div class="banner-status">
+            <div class="banner-status-badge">
+                <div class="banner-status-dot"></div>
+                @ViewBag.CurrentStatus
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(10,77,104,0.1); color:var(--primary);">
+                <i class="bi bi-list-ul"></i>
+            </div>
+            <div>
+                <div class="stat-label">Toplam Hareket</div>
+                <div class="stat-value">@Model.Count</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(22,163,74,0.1); color:var(--success);">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div>
+                <div class="stat-label">Son Durum</div>
+                <div class="stat-value" style="font-size:13px; font-family:'Poppins',sans-serif; font-weight:700;">
+                    @(Model.Any() ? Model.First().TrackingStatus : "-")
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(253,176,34,0.1); color:var(--secondary);">
+                <i class="bi bi-calendar-event"></i>
+            </div>
+            <div>
+                <div class="stat-label">İlk Hareket</div>
+                <div class="stat-value" style="font-size:14px;">
+                    @(Model.Any() ? Model.Last().EventDate.ToString("dd.MM.yyyy") : "-")
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(59,130,246,0.1); color:var(--info);">
+                <i class="bi bi-clock"></i>
+            </div>
+            <div>
+                <div class="stat-label">Son Güncelleme</div>
+                <div class="stat-value" style="font-size:14px;">
+                    @(Model.Any() ? Model.First().EventDate.ToString("dd.MM.yyyy") : "-")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+        <!-- Timeline -->
+        <div class="timeline-card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <i class="bi bi-clock-history" style="color:var(--primary);"></i>
+                    <span class="card-header-title">Hareket Geçmişi</span>
+                    <span class="card-header-count">@Model.Count</span>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="timeline">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            var t        = Model[i];
+                            var dotClass = GetDotClass(t.TrackingStatus);
+                            var icon     = GetStatusIcon(t.TrackingStatus);
+
+                            <div class="tl-item">
+                                <div class="tl-left">
+                                    <div class="tl-dot dot-@dotClass">
+                                        <i class="bi @icon"></i>
+                                    </div>
+                                    <div class="tl-line"></div>
+                                </div>
+                                <div class="tl-content">
+                                    @if (i == 0)
+                                    {
+                                        <div class="tl-latest-badge">En Son</div>
+                                    }
+                                    <div class="tl-content-top">
+                                        <span class="tl-badge badge-@dotClass">
+                                            <i class="bi bi-circle-fill" style="font-size:6px;"></i>
+                                            @t.TrackingStatus
+                                        </span>
+                                        <div class="tl-actions">
+                                            <a asp-controller="ShipmentTracking"
+                                               asp-action="UpdateTracking"
+                                               asp-route-trackingNumber="@ViewBag.TrackingNumber"
+                                               asp-route-index="@(Model.Count - 1 - i)"
+                                               class="tl-action-btn edit"
+                                               data-tooltip="Düzenle">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <a asp-controller="ShipmentTracking"
+                                               asp-action="DeleteTracking"
+                                               asp-route-trackingNumber="@ViewBag.TrackingNumber"
+                                               asp-route-index="@(Model.Count - 1 - i)"
+                                               class="tl-action-btn delete"
+                                               data-tooltip="Sil"
+                                               onclick="return confirm('Bu hareketi silmek istediğinizden emin misiniz?')">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="tl-location">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                        @t.Location
+                                    </div>
+                                    <div class="tl-desc">@t.Description</div>
+                                    <div class="tl-date">
+                                        <i class="bi bi-calendar3"></i>
+                                        @t.EventDate.ToString("dd.MM.yyyy HH:mm")
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+                        <h3 class="empty-title">Henüz Hareket Yok</h3>
+                        <p class="empty-text">Bu kargo için henüz hareket kaydı bulunmuyor.</p>
+                        <a asp-controller="ShipmentTracking"
+                           asp-action="AddTracking"
+                           asp-route-trackingNumber="@ViewBag.TrackingNumber"
+                           class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> İlk Hareketi Ekle
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Side -->
+        <div class="side-column">
+            <div class="side-card">
+                <div class="side-card-header">
+                    <i class="bi bi-pie-chart"></i> Durum Özeti
+                </div>
+                <div class="side-card-body">
+                    <div class="status-summary">
+                        @foreach (var (statusName, color) in statuses)
+                        {
+                            var count = Model.Count(x => x.TrackingStatus == statusName);
+                            <div class="status-summary-item">
+                                <div class="status-summary-left">
+                                    <div class="status-dot-sm" style="background:@color;"></div>
+                                    <span class="status-summary-name">@statusName</span>
+                                </div>
+                                <span class="status-summary-count">@count</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

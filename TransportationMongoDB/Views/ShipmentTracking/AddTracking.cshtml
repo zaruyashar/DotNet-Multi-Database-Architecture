@@ -1,0 +1,461 @@
+﻿@using TransportationMongoDB.Dtos.ShipmentTrackingDtos
+@model CreateShipmentTrackingDto
+
+@{
+    ViewData["Title"] = "AddTracking";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root {
+        --primary: #0A4D68;
+        --accent: #088395;
+        --secondary: #FDB022;
+        --success: #16a34a;
+        --danger: #dc2626;
+        --warning: #f59e0b;
+        --info: #3b82f6;
+        --purple: #8b5cf6;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --border: #e2e8f0;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+        --shadow-lg: 0 10px 32px rgba(0,0,0,0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--dark); }
+
+    .page-container { max-width: 1200px; margin: 0 auto; padding: 40px 32px; animation: fadeIn 0.5s ease-out; }
+
+    @@keyframes fadeIn  { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @@keyframes slideDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+    @@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Header */
+    .page-header { margin-bottom: 28px; }
+    .breadcrumb { display: flex; gap: 8px; align-items: center; font-size: 13px; color: #64748b; font-weight: 500; margin-bottom: 16px; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--secondary); }
+    .page-title { font-size: 28px; font-weight: 800; color: var(--dark); margin-bottom: 6px; display: flex; align-items: center; gap: 14px; }
+    .title-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; }
+    .page-subtitle { font-size: 14px; color: #64748b; font-weight: 500; }
+
+    /* Banner */
+    .shipment-banner { background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 16px; padding: 20px 28px; margin-bottom: 28px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; animation: slideDown 0.4s ease-out 0.1s both; position: relative; overflow: hidden; }
+    .shipment-banner::before { content: ''; position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+    .banner-tracking-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .banner-tracking-number { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: white; letter-spacing: 2px; }
+    .banner-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.2); }
+    .banner-info { display: flex; gap: 32px; flex-wrap: wrap; }
+    .banner-info-item { display: flex; flex-direction: column; gap: 4px; }
+    .banner-info-label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .banner-info-value { font-size: 14px; color: white; font-weight: 600; }
+    .banner-status { margin-left: auto; }
+    .banner-status-badge { padding: 8px 18px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; font-size: 13px; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px; }
+
+    /* Main Grid */
+    .main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; animation: slideUp 0.4s ease-out 0.15s both; }
+    .form-column { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Form Section */
+    .form-section { background: white; border-radius: 16px; padding: 28px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); transition: box-shadow 0.3s; }
+    .form-section:hover { box-shadow: var(--shadow-md); }
+    .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--light); }
+    .section-number { width: 32px; height: 32px; background: var(--primary); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; font-family: 'JetBrains Mono', monospace; }
+    .section-title { font-size: 17px; font-weight: 700; color: var(--dark); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-grid.full { grid-template-columns: 1fr; }
+    .form-label { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 8px; }
+    .label-required { color: var(--danger); }
+    .label-icon { font-size: 14px; color: var(--primary); }
+    .form-input, .form-textarea { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: 'Poppins', sans-serif; font-weight: 500; color: var(--dark); background: white; transition: all 0.2s; }
+    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(10,77,104,0.1); }
+    .form-textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+    .input-hint { font-size: 12px; color: #94a3b8; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+
+    /* Status Cards */
+    .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .status-card { border: 2px solid var(--border); border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; gap: 12px; position: relative; background: white; }
+    .status-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .status-card input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+    .status-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .status-text { flex: 1; }
+    .status-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .status-desc { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .status-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; transition: all 0.2s; flex-shrink: 0; }
+
+    .status-card[data-status="Gönderi Alındı"]:hover, .status-card[data-status="Gönderi Alındı"].selected { border-color: var(--purple); background: rgba(139,92,246,0.05); }
+    .status-card[data-status="Gönderi Alındı"] .status-icon { background: rgba(139,92,246,0.1); color: var(--purple); }
+    .status-card[data-status="Gönderi Alındı"].selected .status-name { color: var(--purple); }
+    .status-card[data-status="Gönderi Alındı"].selected .status-check { background: var(--purple); border-color: var(--purple); }
+
+    .status-card[data-status="Transfer Merkezinde"]:hover, .status-card[data-status="Transfer Merkezinde"].selected { border-color: var(--info); background: rgba(59,130,246,0.05); }
+    .status-card[data-status="Transfer Merkezinde"] .status-icon { background: rgba(59,130,246,0.1); color: var(--info); }
+    .status-card[data-status="Transfer Merkezinde"].selected .status-name { color: var(--info); }
+    .status-card[data-status="Transfer Merkezinde"].selected .status-check { background: var(--info); border-color: var(--info); }
+
+    .status-card[data-status="Yolda"]:hover, .status-card[data-status="Yolda"].selected { border-color: var(--accent); background: rgba(8,131,149,0.05); }
+    .status-card[data-status="Yolda"] .status-icon { background: rgba(8,131,149,0.1); color: var(--accent); }
+    .status-card[data-status="Yolda"].selected .status-name { color: var(--accent); }
+    .status-card[data-status="Yolda"].selected .status-check { background: var(--accent); border-color: var(--accent); }
+
+    .status-card[data-status="Dağıtımda"]:hover, .status-card[data-status="Dağıtımda"].selected { border-color: var(--warning); background: rgba(245,158,11,0.05); }
+    .status-card[data-status="Dağıtımda"] .status-icon { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .status-card[data-status="Dağıtımda"].selected .status-name { color: var(--warning); }
+    .status-card[data-status="Dağıtımda"].selected .status-check { background: var(--warning); border-color: var(--warning); }
+
+    .status-card[data-status="Teslim Edildi"]:hover, .status-card[data-status="Teslim Edildi"].selected { border-color: var(--success); background: rgba(22,163,74,0.05); }
+    .status-card[data-status="Teslim Edildi"] .status-icon { background: rgba(22,163,74,0.1); color: var(--success); }
+    .status-card[data-status="Teslim Edildi"].selected .status-name { color: var(--success); }
+    .status-card[data-status="Teslim Edildi"].selected .status-check { background: var(--success); border-color: var(--success); }
+
+    /* Actions */
+    .form-actions { display: flex; gap: 12px; }
+    .btn { flex: 1; padding: 14px 24px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: var(--shadow-md); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .btn-secondary { background: white; color: var(--dark); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { background: var(--light); border-color: var(--primary); }
+
+    /* Preview */
+    .preview-column { position: sticky; top: 24px; height: fit-content; display: flex; flex-direction: column; gap: 16px; }
+    .preview-card { background: white; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-md); overflow: hidden; }
+    .preview-card-header { padding: 16px 20px; background: var(--light); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .preview-card-header span { font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .preview-card-header i { color: var(--primary); }
+    .preview-card-body { padding: 20px; }
+
+    /* Timeline preview */
+    .tl-wrap { display: flex; flex-direction: column; }
+    .tl-item { display: flex; gap: 14px; padding-bottom: 20px; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-item:last-child .tl-line { display: none; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .tl-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .tl-dot.new-event { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: 0 0 0 4px rgba(10,77,104,0.12); }
+    .tl-dot.old-event { background: var(--light); border: 2px solid var(--border); color: #94a3b8; }
+    .tl-line { width: 2px; flex: 1; min-height: 16px; background: var(--border); margin-top: 4px; }
+    .tl-content { flex: 1; padding-top: 4px; }
+    .tl-content.new-content { background: rgba(10,77,104,0.04); border: 1.5px dashed rgba(10,77,104,0.2); border-radius: 10px; padding: 12px; }
+    .tl-new-label { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+    .tl-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+    .tl-location { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 3px; }
+    .tl-desc { font-size: 12px; color: #64748b; line-height: 1.5; margin-bottom: 4px; }
+    .tl-date { font-size: 11px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; }
+
+    /* Responsive */
+    @@media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } .preview-column { position: relative; top: 0; } }
+    @@media (max-width: 768px) { .page-container { padding: 24px 16px; } .page-title { font-size: 22px; } .form-grid { grid-template-columns: 1fr; } .status-grid { grid-template-columns: 1fr; } .form-actions { flex-direction: column-reverse; } .shipment-banner { flex-direction: column; align-items: flex-start; } .banner-status { margin-left: 0; } }
+</style>
+
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a asp-controller="Dashboard" asp-action="Index"><i class="bi bi-house-door"></i> Ana Sayfa</a>
+            <i class="bi bi-chevron-right"></i>
+            <a asp-controller="Shipment" asp-action="Index">Gönderiler</a>
+            <i class="bi bi-chevron-right"></i>
+            <a asp-controller="ShipmentTracking" asp-action="Index" asp-route-trackingNumber="@ViewBag.TrackingNumber">@ViewBag.TrackingNumber</a>
+            <i class="bi bi-chevron-right"></i>
+            <span>Hareket Ekle</span>
+        </div>
+        <h1 class="page-title">
+            <div class="title-icon"><i class="bi bi-plus-circle"></i></div>
+            Yeni Kargo Hareketi Ekle
+        </h1>
+        <p class="page-subtitle">Kargonun mevcut konumunu ve durumunu güncelleyin</p>
+    </div>
+
+    <!-- Banner -->
+    <div class="shipment-banner">
+        <div>
+            <div class="banner-tracking-label">Takip Numarası</div>
+            <div class="banner-tracking-number">@ViewBag.TrackingNumber</div>
+        </div>
+        <div class="banner-divider"></div>
+        <div class="banner-info">
+            <div class="banner-info-item">
+                <span class="banner-info-label">Gönderici</span>
+                <span class="banner-info-value">@ViewBag.SenderName</span>
+            </div>
+            <div class="banner-info-item">
+                <span class="banner-info-label">Alıcı</span>
+                <span class="banner-info-value">@ViewBag.ReceiverName</span>
+            </div>
+            <div class="banner-info-item">
+                <span class="banner-info-label">Rota</span>
+                <span class="banner-info-value">@ViewBag.OriginCity → @ViewBag.DestinationCity</span>
+            </div>
+        </div>
+        <div class="banner-status">
+            <div class="banner-status-badge">
+                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                @ViewBag.CurrentStatus
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <form asp-action="AddTracking" asp-controller="ShipmentTracking" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="TrackingNumber" />
+
+        <div class="main-grid">
+            <div class="form-column">
+
+                <!-- 1: Tarih & Lokasyon -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <div class="section-title">Tarih ve Lokasyon</div>
+                    </div>
+                    <div class="form-grid">
+                        <div>
+                            <label class="form-label">
+                                <i class="bi bi-calendar-event label-icon"></i>
+                                Hareket Tarihi <span class="label-required">*</span>
+                            </label>
+                            <input type="datetime-local" class="form-input" asp-for="EventDate" id="eventDateInput" required />
+                            <span asp-validation-for="EventDate" class="input-hint" style="color:var(--danger);"></span>
+                        </div>
+                        <div>
+                            <label class="form-label">
+                                <i class="bi bi-geo-alt label-icon"></i>
+                                Lokasyon <span class="label-required">*</span>
+                            </label>
+                            <input type="text" class="form-input" asp-for="Location" id="locationInput" placeholder="Örn: İstanbul / Kadıköy Şubesi" maxlength="150" required />
+                            <span asp-validation-for="Location" class="input-hint" style="color:var(--danger);"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2: Durum -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <div class="section-title">Kargo Durumu</div>
+                    </div>
+                    <input type="hidden" asp-for="TrackingStatus" id="trackingStatusInput" />
+                    <div class="status-grid">
+                        <label class="status-card" data-status="Gönderi Alındı" onclick="selectStatus(this)">
+                            <input type="radio" name="statusRadio" value="Gönderi Alındı" />
+                            <div class="status-icon"><i class="bi bi-box-seam"></i></div>
+                            <div class="status-text">
+                                <div class="status-name">Gönderi Alındı</div>
+                                <div class="status-desc">Şubede teslim alındı</div>
+                            </div>
+                            <div class="status-check"><i class="bi bi-check"></i></div>
+                        </label>
+                        <label class="status-card" data-status="Transfer Merkezinde" onclick="selectStatus(this)">
+                            <input type="radio" name="statusRadio" value="Transfer Merkezinde" />
+                            <div class="status-icon"><i class="bi bi-building"></i></div>
+                            <div class="status-text">
+                                <div class="status-name">Transfer Merkezinde</div>
+                                <div class="status-desc">Transfer noktasında</div>
+                            </div>
+                            <div class="status-check"><i class="bi bi-check"></i></div>
+                        </label>
+                        <label class="status-card" data-status="Yolda" onclick="selectStatus(this)">
+                            <input type="radio" name="statusRadio" value="Yolda" />
+                            <div class="status-icon"><i class="bi bi-truck"></i></div>
+                            <div class="status-text">
+                                <div class="status-name">Yolda</div>
+                                <div class="status-desc">Taşıma aracında</div>
+                            </div>
+                            <div class="status-check"><i class="bi bi-check"></i></div>
+                        </label>
+                        <label class="status-card" data-status="Dağıtımda" onclick="selectStatus(this)">
+                            <input type="radio" name="statusRadio" value="Dağıtımda" />
+                            <div class="status-icon"><i class="bi bi-bicycle"></i></div>
+                            <div class="status-text">
+                                <div class="status-name">Dağıtımda</div>
+                                <div class="status-desc">Kurye teslimatta</div>
+                            </div>
+                            <div class="status-check"><i class="bi bi-check"></i></div>
+                        </label>
+                        <label class="status-card" data-status="Teslim Edildi" onclick="selectStatus(this)" style="grid-column: 1 / -1;">
+                            <input type="radio" name="statusRadio" value="Teslim Edildi" />
+                            <div class="status-icon"><i class="bi bi-check-circle"></i></div>
+                            <div class="status-text">
+                                <div class="status-name">Teslim Edildi</div>
+                                <div class="status-desc">Alıcıya başarıyla teslim edildi</div>
+                            </div>
+                            <div class="status-check"><i class="bi bi-check"></i></div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 3: Açıklama -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <div class="section-title">Hareket Açıklaması</div>
+                    </div>
+                    <div class="form-grid full">
+                        <div>
+                            <label class="form-label">
+                                <i class="bi bi-card-text label-icon"></i>
+                                Açıklama <span class="label-required">*</span>
+                            </label>
+                            <textarea class="form-textarea" asp-for="Description" id="descriptionInput" rows="4" placeholder="Örn: Kargonuz transfer merkezine ulaştı..." maxlength="300" required></textarea>
+                            <span asp-validation-for="Description" class="input-hint" style="color:var(--danger);"></span>
+                            <div class="input-hint">
+                                <i class="bi bi-info-circle"></i>
+                                <span id="descCounter">0</span>/300 karakter
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <a asp-action="Index" asp-controller="ShipmentTracking" asp-route-trackingNumber="@ViewBag.TrackingNumber" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> İptal
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Hareketi Kaydet
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Preview -->
+            <div class="preview-column">
+                <div class="preview-card">
+                    <div class="preview-card-header">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Canlı Önizleme</span>
+                    </div>
+                    <div class="preview-card-body">
+                        <div class="tl-wrap">
+
+                            <!-- Yeni hareket -->
+                            <div class="tl-item">
+                                <div class="tl-left">
+                                    <div class="tl-dot new-event" id="previewDot">
+                                        <i class="bi bi-plus" id="previewDotIcon"></i>
+                                    </div>
+                                    <div class="tl-line"></div>
+                                </div>
+                                <div class="tl-content new-content">
+                                    <div class="tl-new-label"><i class="bi bi-stars"></i> Yeni Hareket</div>
+                                    <div class="tl-badge" id="previewBadge" style="background:rgba(10,77,104,0.1); color:var(--primary);">
+                                        <i class="bi bi-circle-fill" style="font-size:6px;"></i>
+                                        <span id="previewStatusText">Durum seçiniz...</span>
+                                    </div>
+                                    <div class="tl-location" id="previewLocation" style="color:#94a3b8;">Lokasyon giriniz...</div>
+                                    <div class="tl-desc" id="previewDesc">Açıklama giriniz...</div>
+                                    <div class="tl-date" id="previewDate">--.--.---- --:--</div>
+                                </div>
+                            </div>
+
+                            <!-- Mevcut hareketler -->
+                            @if (ViewBag.ExistingTrackings != null)
+                            {
+                                foreach (var t in ViewBag.ExistingTrackings)
+                                {
+                                    <div class="tl-item">
+                                        <div class="tl-left">
+                                            <div class="tl-dot old-event"><i class="bi bi-check"></i></div>
+                                            <div class="tl-line"></div>
+                                        </div>
+                                        <div class="tl-content">
+                                            <div class="tl-badge" style="background:var(--light); color:#64748b;">
+                                                <i class="bi bi-circle-fill" style="font-size:6px;"></i>
+                                                @t.TrackingStatus
+                                            </div>
+                                            <div class="tl-location">@t.Location</div>
+                                            <div class="tl-desc">@t.Description</div>
+                                            <div class="tl-date">@((DateTime)t.EventDate).ToString("dd.MM.yyyy HH:mm")</div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const statusConfig = {
+            "Gönderi Alındı":      { icon: "bi-box-seam",    color: "#8b5cf6", bg: "rgba(139,92,246,0.12)" },
+            "Transfer Merkezinde": { icon: "bi-building",     color: "#3b82f6", bg: "rgba(59,130,246,0.12)" },
+            "Yolda":               { icon: "bi-truck",        color: "#088395", bg: "rgba(8,131,149,0.12)"  },
+            "Dağıtımda":           { icon: "bi-bicycle",      color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
+            "Teslim Edildi":       { icon: "bi-check-circle", color: "#16a34a", bg: "rgba(22,163,74,0.12)"  }
+        };
+
+        function selectStatus(card) {
+            document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            document.getElementById('trackingStatusInput').value = card.getAttribute('data-status');
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const location    = document.getElementById('locationInput').value;
+            const description = document.getElementById('descriptionInput').value;
+            const dateVal     = document.getElementById('eventDateInput').value;
+            const status      = document.getElementById('trackingStatusInput').value;
+
+            const locEl = document.getElementById('previewLocation');
+            locEl.textContent = location || 'Lokasyon giriniz...';
+            locEl.style.color = location ? 'var(--dark)' : '#94a3b8';
+
+            document.getElementById('previewDesc').textContent = description || 'Açıklama giriniz...';
+
+            if (dateVal) {
+                const d = new Date(dateVal);
+                document.getElementById('previewDate').textContent =
+                    d.toLocaleDateString('tr-TR', { day:'2-digit', month:'2-digit', year:'numeric' }) + ' ' +
+                    d.toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' });
+            }
+
+            if (status && statusConfig[status]) {
+                const cfg = statusConfig[status];
+                const badge = document.getElementById('previewBadge');
+                badge.style.background = cfg.bg;
+                badge.style.color = cfg.color;
+                document.getElementById('previewStatusText').textContent = status;
+                const dot = document.getElementById('previewDot');
+                dot.style.background = cfg.color;
+                dot.style.boxShadow  = `0 0 0 4px ${cfg.bg}`;
+                document.getElementById('previewDotIcon').className = `bi ${cfg.icon}`;
+            }
+        }
+
+        document.getElementById('descriptionInput').addEventListener('input', function () {
+            document.getElementById('descCounter').textContent = this.value.length;
+            updatePreview();
+        });
+
+        document.getElementById('locationInput').addEventListener('input', updatePreview);
+        document.getElementById('eventDateInput').addEventListener('change', updatePreview);
+
+        window.addEventListener('load', function () {
+            const now   = new Date();
+            const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+            document.getElementById('eventDateInput').value = local.toISOString().slice(0, 16);
+            updatePreview();
+        });
+
+        document.querySelector('form').addEventListener('submit', function (e) {
+            if (!document.getElementById('trackingStatusInput').value) {
+                e.preventDefault();
+                alert('Lütfen bir kargo durumu seçiniz!');
+            }
+        });
+    </script>
+}

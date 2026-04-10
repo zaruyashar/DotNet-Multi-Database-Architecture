@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using DatabaseMastery.TransportMongoDb.Entities;
+using TransportationMongoDB.Dtos.ShipmentTrackingDtos;
+using TransportationMongoDB.Entities;
 using TransportationMongoDB.Dtos.AboutDtos;
 using TransportationMongoDB.Dtos.BrandDtos;
 using TransportationMongoDB.Dtos.GetInTouchDtos;
@@ -7,13 +8,15 @@ using TransportationMongoDB.Dtos.HowItWorkDtos;
 using TransportationMongoDB.Dtos.OfferDtos;
 using TransportationMongoDB.Dtos.ProjectSectionDtos;
 using TransportationMongoDB.Dtos.QuestionDtos;
+using TransportationMongoDB.Dtos.ShipmentDtos;
 using TransportationMongoDB.Dtos.SliderDtos;
 using TransportationMongoDB.Dtos.TestimonialDtos;
 using TransportationMongoDB.Entities;
+using DatabaseMastery.TransportMongoDb.Entities;
 
-namespace TransportationMongoDB.Mapping
+namespace DatabaseMastery.TransportMongoDb.Mapping
 {
-    public class GeneralMapping : Profile
+    public class GeneralMapping:Profile
     {
         public GeneralMapping()
         {
@@ -38,10 +41,9 @@ namespace TransportationMongoDB.Mapping
             CreateMap<About, GetAboutByIdDto>().ReverseMap();
 
             CreateMap<GetInTouch, ResultGetInTouchDto>().ReverseMap();
-            CreateMap<GetInTouch, CreateGetInTouchDto>().ReverseMap();
             CreateMap<GetInTouch, UpdateGetInTouchDto>().ReverseMap();
+            CreateMap<GetInTouch, CreateGetInTouchDto>().ReverseMap();
             CreateMap<GetInTouch, GetInTouchByIdDto>().ReverseMap();
-
 
             CreateMap<HowItWork, ResultHowItWorkDto>().ReverseMap();
             CreateMap<HowItWork, CreateHowItWorkDto>().ReverseMap();
@@ -54,14 +56,23 @@ namespace TransportationMongoDB.Mapping
             CreateMap<Testimonial, GetTestimonialByIdDto>().ReverseMap();
 
             CreateMap<ProjectSection, ResultProjectSectionDto>().ReverseMap();
-            CreateMap<ProjectSection, CreateProjectSectionDto>().ReverseMap();
             CreateMap<ProjectSection, UpdateProjectSectionDto>().ReverseMap();
+            CreateMap<ProjectSection, CreateProjectSectionDto>().ReverseMap();
             CreateMap<ProjectSection, GetProjectSectionByIdDto>().ReverseMap();
 
             CreateMap<Question, ResultQuestionDto>().ReverseMap();
-            CreateMap<Question, CreateQuestionDto>().ReverseMap();
             CreateMap<Question, UpdateQuestionDto>().ReverseMap();
             CreateMap<Question, GetQuestionByIdDto>().ReverseMap();
+            CreateMap<Question, CreateQuestionDto>().ReverseMap();
+
+            CreateMap<Shipment, ResultShipmentDto>().ReverseMap();
+            CreateMap<Shipment, CreateShipmentDto>().ReverseMap();
+            CreateMap<Shipment, UpdateShipmentDto>().ReverseMap();
+            CreateMap<Shipment, GetShipmentByIdDto>().ReverseMap();
+
+            CreateMap<ShipmentTracking, CreateShipmentTrackingDto>().ReverseMap();
+            CreateMap<ShipmentTracking, ResultShipmentTrackingDto>().ReverseMap();
+            CreateMap<ShipmentTracking, UpdateShipmentTrackingDto>().ReverseMap();
         }
     }
 }

@@ -1,0 +1,1102 @@
+﻿@model CreateShipmentDto
+@{
+    ViewData["Title"] = "CreateShipment";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root {
+        --primary: #0A4D68;
+        --primary-light: #05668D;
+        --secondary: #FDB022;
+        --accent: #088395;
+        --success: #16a34a;
+        --danger: #dc2626;
+        --warning: #f59e0b;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --border: #e2e8f0;
+        --card-bg: #ffffff;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--light);
+        color: var(--dark);
+    }
+
+    .shipment-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 32px;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* Header Section */
+    .page-header {
+        margin-bottom: 32px;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .breadcrumb {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+            .breadcrumb a:hover {
+                color: var(--secondary);
+            }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--dark);
+    }
+
+        .btn-icon:hover {
+            background: var(--light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+    .page-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .title-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+    }
+
+    .page-subtitle {
+        font-size: 15px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    /* Main Grid */
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 24px;
+        animation: slideUp 0.5s ease-out 0.1s both;
+    }
+
+    @@keyframes slideUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* Form Column */
+    .form-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-section {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 28px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s;
+    }
+
+        .form-section:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--light);
+    }
+
+    .section-number {
+        width: 32px;
+        height: 32px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+        .form-grid.full {
+            grid-template-columns: 1fr;
+        }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .label-required {
+        color: var(--danger);
+    }
+
+    .label-icon {
+        font-size: 14px;
+        color: var(--primary);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        color: var(--dark);
+        background: white;
+        transition: all 0.2s;
+    }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 77, 104, 0.1);
+        }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+        line-height: 1.6;
+    }
+
+    .tracking-input {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .input-hint {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* Info Card */
+    .info-card {
+        background: linear-gradient(135deg, rgba(253, 176, 34, 0.1), rgba(253, 176, 34, 0.05));
+        border: 1.5px solid rgba(253, 176, 34, 0.3);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .info-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--secondary);
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 6px;
+    }
+
+    .info-text {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    /* Preview Column */
+    .preview-column {
+        position: sticky;
+        top: 24px;
+        height: fit-content;
+    }
+
+    .preview-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 28px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+        animation: slideUp 0.5s ease-out 0.2s both;
+    }
+
+    .preview-header {
+        text-align: center;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--light);
+    }
+
+    .preview-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+    }
+
+    .shipment-card {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 12px;
+        padding: 24px;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .tracking-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 1px;
+    }
+
+    .tracking-number-display {
+        font-size: 20px;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 2px;
+        margin-bottom: 16px;
+    }
+
+    .route-display {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .route-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .route-arrow {
+        font-size: 16px;
+        margin: 0 4px;
+    }
+
+    .preview-details {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .preview-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background: var(--light);
+        border-radius: 8px;
+    }
+
+    .preview-item-label {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .preview-item-value {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--dark);
+        text-align: right;
+    }
+
+    .status-preview {
+        display: inline-block;
+        padding: 4px 12px;
+        background: var(--success);
+        color: white;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* Actions */
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 14px 24px;
+        border-radius: 10px;
+        border: none;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 1.5px solid var(--border);
+    }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            border-color: var(--primary);
+        }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .main-grid
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-column {
+        position: relative;
+        top: 0;
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .shipment-container
+
+    {
+        padding: 24px 16px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    }
+</style>
+
+<div class="shipment-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-top">
+            <div class="breadcrumb">
+                <a href="/Default/Index/">
+                    <i class="bi bi-house-door"></i> Ana Sayfa
+                </a>
+                <i class="bi bi-chevron-right"></i>
+                <a href="/Shipment/ShipmentList/">Gönderiler</a>
+                <i class="bi bi-chevron-right"></i>
+                <span>Yeni Gönderi</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" title="Yardım">
+                    <i class="bi bi-question-circle"></i>
+                </button>
+                <button class="btn-icon" title="Ayarlar">
+                    <i class="bi bi-gear"></i>
+                </button>
+            </div>
+        </div>
+        <h1 class="page-title">
+            <div class="title-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            Yeni Kargo Gönderi Oluştur
+        </h1>
+        <p class="page-subtitle">Gönderi bilgilerini girerek yeni bir kargo kaydı oluşturun</p>
+    </div>
+
+    <!-- Main Grid -->
+    <form method="post" id="shipmentForm">
+        <div class="main-grid">
+            <!-- Form Column -->
+            <div class="form-column">
+                <!-- Tracking Info Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <div class="section-title">Takip Bilgileri</div>
+                    </div>
+
+                    <div class="form-grid full">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-upc-scan label-icon"></i>
+                                Takip Numarası
+                                <span class="label-required">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-input tracking-input"
+                                   asp-for="TrackingNumber"
+                                   id="trackingInput"
+                                   placeholder="TRK-"
+                                   maxlength="50"
+                                   required />
+                            <div class="input-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Otomatik oluşturulmaktadır (TRK-XXXXXXXX)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sender & Receiver Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <div class="section-title">Gönderici ve Alıcı Bilgileri</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-person label-icon"></i>
+                                Gönderici Adı
+                                <span class="label-required">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-input"
+                                   asp-for="SenderName"
+                                   id="senderInput"
+                                   placeholder="Örn: Ahmet Yılmaz"
+                                   maxlength="100"
+                                   required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-person-check label-icon"></i>
+                                Alıcı Adı
+                                <span class="label-required">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-input"
+                                   asp-for="ReceiverName"
+                                   id="receiverInput"
+                                   placeholder="Örn: Mehmet Demir"
+                                   maxlength="100"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <i class="bi bi-shield-check info-icon"></i>
+                        <div class="info-content">
+                            <div class="info-title">Güvenlik Notu</div>
+                            <div class="info-text">
+                                Gönderici ve alıcı bilgileri gizlilik politikası kapsamında korunmaktadır.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Origin Location -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <div class="section-title">Çıkış Lokasyonu</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-geo-alt label-icon"></i>
+                                Çıkış Şehri
+                                <span class="label-required">*</span>
+                            </label>
+                            <select class="form-select"
+                                    asp-for="OriginCity"
+                                    id="originCitySelect"
+                                    required>
+                                <option value="">Şehir Seçiniz</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-pin-map label-icon"></i>
+                                Çıkış İlçesi
+                                <span class="label-required">*</span>
+                            </label>
+                            <select class="form-select"
+                                    asp-for="OriginDistrict"
+                                    id="originDistrictSelect"
+                                    required
+                                    disabled>
+                                <option value="">Önce şehir seçiniz</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destination Location -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <div class="section-title">Varış Lokasyonu</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-geo-alt label-icon"></i>
+                                Varış Şehri
+                                <span class="label-required">*</span>
+                            </label>
+                            <select class="form-select"
+                                    asp-for="DestinationCity"
+                                    id="destinationCitySelect"
+                                    required>
+                                <option value="">Şehir Seçiniz</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-pin-map label-icon"></i>
+                                Varış İlçesi
+                                <span class="label-required">*</span>
+                            </label>
+                            <select class="form-select"
+                                    asp-for="DestinationDistrict"
+                                    id="destinationDistrictSelect"
+                                    required
+                                    disabled>
+                                <option value="">Önce şehir seçiniz</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">5</div>
+                        <div class="section-title">Adres Bilgisi</div>
+                    </div>
+
+                    <div class="form-grid full">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-mailbox label-icon"></i>
+                                Detaylı Adres
+                                <span class="label-required">*</span>
+                            </label>
+                            <textarea class="form-textarea"
+                                      asp-for="Address"
+                                      id="addressInput"
+                                      rows="4"
+                                      placeholder="Mahalle, sokak, bina no, daire no vb. detaylı adres bilgisi..."
+                                      maxlength="500"
+                                      required></textarea>
+                            <div class="input-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Teslimat için detaylı adres bilgisi giriniz
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-number">6</div>
+                        <div class="section-title">Durum Bilgileri</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-calendar-event label-icon"></i>
+                                Oluşturulma Tarihi
+                                <span class="label-required">*</span>
+                            </label>
+                            <input type="datetime-local"
+                                   class="form-input"
+                                   asp-for="CreatedDate"
+                                   id="dateInput"
+                                   required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-flag label-icon"></i>
+                                Güncel Durum
+                                <span class="label-required">*</span>
+                            </label>
+                            <select class="form-select"
+                                    asp-for="CurrentStatus"
+                                    id="statusInput"
+                                    required>
+                                <option value="">Durum Seçiniz</option>
+                                <option value="Gönderi Alındı">Gönderi Alındı</option>
+                                <option value="Transfer Merkezinde">Transfer Merkezinde</option>
+                                <option value="Yolda">Yolda</option>
+                                <option value="Dağıtımda">Dağıtımda</option>
+                                <option value="Teslim Edildi">Teslim Edildi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <a href="/Shipment/ShipmentList/" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i>
+                        İptal
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i>
+                        Gönderiyi Kaydet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Column -->
+            <div class="preview-column">
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <div class="preview-label">
+                            <i class="bi bi-eye"></i> Canlı Önizleme
+                        </div>
+                    </div>
+
+                    <div class="shipment-card">
+                        <div class="tracking-badge">TRACKING NUMBER</div>
+                        <div class="tracking-number-display" id="previewTracking">TRK-XXXXXXXX</div>
+                        <div class="route-display">
+                            <div class="route-item">
+                                <i class="bi bi-geo-alt-fill"></i>
+                                <span id="previewOriginFull">Çıkış: Şehir / İlçe</span>
+                            </div>
+                            <div class="route-item">
+                                <i class="bi bi-arrow-down"></i>
+                            </div>
+                            <div class="route-item">
+                                <i class="bi bi-pin-map-fill"></i>
+                                <span id="previewDestinationFull">Varış: Şehir / İlçe</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="preview-details">
+                        <div class="preview-item">
+                            <span class="preview-item-label">Gönderici</span>
+                            <span class="preview-item-value" id="previewSender">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-item-label">Alıcı</span>
+                            <span class="preview-item-value" id="previewReceiver">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-item-label">Adres</span>
+                            <span class="preview-item-value" id="previewAddress" style="font-size: 11px; max-width: 200px;">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-item-label">Oluşturma</span>
+                            <span class="preview-item-value" id="previewDate">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-item-label">Durum</span>
+                            <span class="status-preview" id="previewStatus">Bekliyor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Türkiye İlleri ve İlçeleri
+    const turkeyData = {
+        "Adana": ["Seyhan", "Yüreğir", "Çukurova", "Sarıçam", "Aladağ", "Ceyhan", "Feke", "İmamoğlu", "Karaisalı", "Karataş", "Kozan", "Pozantı", "Saimbeyli", "Tufanbeyli", "Yumurtalık"],
+        "Adıyaman": ["Merkez", "Besni", "Çelikhan", "Gerger", "Gölbaşı", "Kahta", "Samsat", "Sincik", "Tut"],
+        "Afyonkarahisar": ["Merkez", "Başmakçı", "Bayat", "Bolvadin", "Çay", "Çobanlar", "Dazkırı", "Dinar", "Emirdağ", "Evciler", "Hocalar", "İhsaniye", "İscehisar", "Kızılören", "Sandıklı", "Sinanpaşa", "Sultandağı", "Şuhut"],
+        "Ağrı": ["Merkez", "Diyadin", "Doğubayazıt", "Eleşkirt", "Hamur", "Patnos", "Taşlıçay", "Tutak"],
+        "Aksaray": ["Merkez", "Ağaçören", "Eskil", "Gülağaç", "Güzelyurt", "Ortaköy", "Sarıyahşi", "Sultanhanı"],
+        "Amasya": ["Merkez", "Göynücek", "Gümüşhacıköy", "Hamamözü", "Merzifon", "Suluova", "Taşova"],
+        "Ankara": ["Altındağ", "Çankaya", "Keçiören", "Mamak", "Sincan", "Yenimahalle", "Etimesgut", "Pursaklar", "Akyurt", "Ayaş", "Bala", "Beypazarı", "Çamlıdere", "Çubuk", "Elmadağ", "Evren", "Gölbaşı", "Güdül", "Haymana", "Kahramankazan", "Kalecik", "Kızılcahamam", "Nallıhan", "Polatlı", "Şereflikoçhisar"],
+        "Antalya": ["Muratpaşa", "Kepez", "Konyaaltı", "Döşemealtı", "Aksu", "Akseki", "Alanya", "Demre", "Elmalı", "Finike", "Gazipaşa", "Gündoğmuş", "İbradı", "Kaş", "Kemer", "Korkuteli", "Kumluca", "Manavgat", "Serik"],
+        "Ardahan": ["Merkez", "Çıldır", "Damal", "Göle", "Hanak", "Posof"],
+        "Artvin": ["Merkez", "Ardanuç", "Arhavi", "Borçka", "Hopa", "Murgul", "Şavşat", "Yusufeli"],
+        "Aydın": ["Efeler", "Bozdoğan", "Buharkent", "Çine", "Didim", "Germencik", "İncirliova", "Karacasu", "Karpuzlu", "Koçarlı", "Köşk", "Kuşadası", "Kuyucak", "Nazilli", "Söke", "Sultanhisar", "Yenipazar"],
+        "Balıkesir": ["Altıeylül", "Karesi", "Ayvalık", "Balya", "Bandırma", "Bigadiç", "Burhaniye", "Dursunbey", "Edremit", "Erdek", "Gömeç", "Gönen", "Havran", "İvrindi", "Kepsut", "Manyas", "Marmara", "Savaştepe", "Sındırgı", "Susurluk"],
+        "Bartın": ["Merkez", "Amasra", "Kurucaşile", "Ulus"],
+        "Batman": ["Merkez", "Beşiri", "Gercüş", "Hasankeyf", "Kozluk", "Sason"],
+        "Bayburt": ["Merkez", "Aydıntepe", "Demirözü"],
+        "Bilecik": ["Merkez", "Bozüyük", "Gölpazarı", "İnhisar", "Osmaneli", "Pazaryeri", "Söğüt", "Yenipazar"],
+        "Bingöl": ["Merkez", "Adaklı", "Genç", "Karlıova", "Kiğı", "Solhan", "Yayladere", "Yedisu"],
+        "Bitlis": ["Merkez", "Adilcevaz", "Ahlat", "Güroymak", "Hizan", "Mutki", "Tatvan"],
+        "Bolu": ["Merkez", "Dörtdivan", "Gerede", "Göynük", "Kıbrıscık", "Mengen", "Mudurnu", "Seben", "Yeniçağa"],
+        "Burdur": ["Merkez", "Ağlasun", "Altınyayla", "Bucak", "Çavdır", "Çeltikçi", "Gölhisar", "Karamanlı", "Kemer", "Tefenni", "Yeşilova"],
+        "Bursa": ["Osmangazi", "Yıldırım", "Nilüfer", "Büyükorhan", "Gemlik", "Gürsu", "Harmancık", "İnegöl", "İznik", "Karacabey", "Keles", "Kestel", "Mudanya", "Mustafakemalpaşa", "Orhaneli", "Orhangazi", "Yenişehir"],
+        "Çanakkale": ["Merkez", "Ayvacık", "Bayramiç", "Biga", "Bozcaada", "Çan", "Eceabat", "Ezine", "Gelibolu", "Gökçeada", "Lapseki", "Yenice"],
+        "Çankırı": ["Merkez", "Atkaracalar", "Bayramören", "Çerkeş", "Eldivan", "Ilgaz", "Kızılırmak", "Korgun", "Kurşunlu", "Orta", "Şabanözü", "Yapraklı"],
+        "Çorum": ["Merkez", "Alaca", "Bayat", "Boğazkale", "Dodurga", "İskilip", "Kargı", "Laçin", "Mecitözü", "Oğuzlar", "Ortaköy", "Osmancık", "Sungurlu", "Uğurludağ"],
+        "Denizli": ["Merkezefendi", "Pamukkale", "Acıpayam", "Babadağ", "Baklan", "Bekilli", "Beyağaç", "Bozkurt", "Buldan", "Çal", "Çameli", "Çardak", "Çivril", "Güney", "Honaz", "Kale", "Sarayköy", "Serinhisar", "Tavas"],
+        "Diyarbakır": ["Bağlar", "Kayapınar", "Sur", "Yenişehir", "Bismil", "Çermik", "Çınar", "Çüngüş", "Dicle", "Eğil", "Ergani", "Hani", "Hazro", "Kocaköy", "Kulp", "Lice", "Silvan"],
+        "Düzce": ["Merkez", "Akçakoca", "Cumayeri", "Çilimli", "Gölyaka", "Gümüşova", "Kaynaşlı", "Yığılca"],
+        "Edirne": ["Merkez", "Enez", "Havsa", "İpsala", "Keşan", "Lalapaşa", "Meriç", "Süloğlu", "Uzunköprü"],
+        "Elazığ": ["Merkez", "Ağın", "Alacakaya", "Arıcak", "Baskil", "Karakoçan", "Keban", "Kovancılar", "Maden", "Palu", "Sivrice"],
+        "Erzincan": ["Merkez", "Çayırlı", "İliç", "Kemah", "Kemaliye", "Otlukbeli", "Refahiye", "Tercan", "Üzümlü"],
+        "Erzurum": ["Yakutiye", "Palandöken", "Aziziye", "Aşkale", "Çat", "Hınıs", "Horasan", "İspir", "Karaçoban", "Karayazı", "Köprüköy", "Narman", "Oltu", "Olur", "Pasinler", "Pazaryolu", "Şenkaya", "Tekman", "Tortum", "Uzundere"],
+        "Eskişehir": ["Odunpazarı", "Tepebaşı", "Alpu", "Beylikova", "Çifteler", "Günyüzü", "Han", "İnönü", "Mahmudiye", "Mihalgazi", "Mihalıççık", "Sarıcakaya", "Seyitgazi", "Sivrihisar"],
+        "Gaziantep": ["Şahinbey", "Şehitkamil", "Oğuzeli", "Araban", "İslahiye", "Karkamış", "Nizip", "Nurdağı", "Yavuzeli"],
+        "Giresun": ["Merkez", "Alucra", "Bulancak", "Çamoluk", "Çanakçı", "Dereli", "Doğankent", "Espiye", "Eynesil", "Görele", "Güce", "Keşap", "Piraziz", "Şebinkarahisar", "Tirebolu", "Yağlıdere"],
+        "Gümüşhane": ["Merkez", "Kelkit", "Köse", "Kürtün", "Şiran", "Torul"],
+        "Hakkari": ["Merkez", "Çukurca", "Şemdinli", "Yüksekova"],
+        "Hatay": ["Antakya", "Arsuz", "Defne", "Payas", "Altınözü", "Belen", "Dörtyol", "Erzin", "Hassa", "İskenderun", "Kırıkhan", "Kumlu", "Reyhanlı", "Samandağ", "Yayladağı"],
+        "Iğdır": ["Merkez", "Aralık", "Karakoyunlu", "Tuzluca"],
+        "Isparta": ["Merkez", "Aksu", "Atabey", "Eğirdir", "Gelendost", "Gönen", "Keçiborlu", "Senirkent", "Sütçüler", "Şarkikaraağaç", "Uluborlu", "Yalvaç", "Yenişarbademli"],
+        "İstanbul": ["Adalar", "Arnavutköy", "Ataşehir", "Avcılar", "Bağcılar", "Bahçelievler", "Bakırköy", "Başakşehir", "Bayrampaşa", "Beşiktaş", "Beykoz", "Beylikdüzü", "Beyoğlu", "Büyükçekmece", "Çatalca", "Çekmeköy", "Esenler", "Esenyurt", "Eyüpsultan", "Fatih", "Gaziosmanpaşa", "Güngören", "Kadıköy", "Kağıthane", "Kartal", "Küçükçekmece", "Maltepe", "Pendik", "Sancaktepe", "Sarıyer", "Silivri", "Sultanbeyli", "Sultangazi", "Şile", "Şişli", "Tuzla", "Ümraniye", "Üsküdar", "Zeytinburnu"],
+        "İzmir": ["Balçova", "Bayraklı", "Bornova", "Buca", "Çiğli", "Gaziemir", "Güzelbahçe", "Karabağlar", "Karşıyaka", "Konak", "Narlıdere", "Aliağa", "Bayındır", "Bergama", "Beydağ", "Çeşme", "Dikili", "Foça", "Karaburun", "Kemalpaşa", "Kınık", "Kiraz", "Menderes", "Menemen", "Ödemiş", "Seferihisar", "Selçuk", "Tire", "Torbalı", "Urla"],
+        "Kahramanmaraş": ["Dulkadiroğlu", "Onikişubat", "Afşin", "Andırın", "Çağlayancerit", "Ekinözü", "Elbistan", "Göksun", "Nurhak", "Pazarcık", "Türkoğlu"],
+        "Karabük": ["Merkez", "Eflani", "Eskipazar", "Ovacık", "Safranbolu", "Yenice"],
+        "Karaman": ["Merkez", "Ayrancı", "Başyayla", "Ermenek", "Kazımkarabekir", "Sarıveliler"],
+        "Kars": ["Merkez", "Akyaka", "Arpaçay", "Digor", "Kağızman", "Sarıkamış", "Selim", "Susuz"],
+        "Kastamonu": ["Merkez", "Abana", "Ağlı", "Araç", "Azdavay", "Bozkurt", "Cide", "Çatalzeytin", "Daday", "Devrekani", "Doğanyurt", "Hanönü", "İhsangazi", "İnebolu", "Küre", "Pınarbaşı", "Seydiler", "Şenpazar", "Taşköprü", "Tosya"],
+        "Kayseri": ["Kocasinan", "Melikgazi", "Talas", "Hacılar", "Akkışla", "Bünyan", "Develi", "Felahiye", "İncesu", "Özvatan", "Pınarbaşı", "Sarıoğlan", "Sarız", "Tomarza", "Yahyalı", "Yeşilhisar"],
+        "Kilis": ["Merkez", "Elbeyli", "Musabeyli", "Polateli"],
+        "Kırıkkale": ["Merkez", "Bahşili", "Balışeyh", "Çelebi", "Delice", "Karakeçili", "Keskin", "Sulakyurt", "Yahşihan"],
+        "Kırklareli": ["Merkez", "Babaeski", "Demirköy", "Kofçaz", "Lüleburgaz", "Pehlivanköy", "Pınarhisar", "Vize"],
+        "Kırşehir": ["Merkez", "Akçakent", "Akpınar", "Boztepe", "Çiçekdağı", "Kaman", "Mucur"],
+        "Kocaeli": ["Başiskele", "Çayırova", "Darıca", "Derince", "Dilovası", "Gebze", "Gölcük", "İzmit", "Kandıra", "Karamürsel", "Kartepe", "Körfez"],
+        "Konya": ["Karatay", "Meram", "Selçuklu", "Ahırlı", "Akören", "Akşehir", "Altınekin", "Beyşehir", "Bozkır", "Cihanbeyli", "Çeltik", "Çumra", "Derbent", "Derebucak", "Doğanhisar", "Emirgazi", "Ereğli", "Güneysınır", "Hadim", "Halkapınar", "Hüyük", "Ilgın", "Kadınhanı", "Karapınar", "Kulu", "Sarayönü", "Seydişehir", "Taşkent", "Tuzlukçu", "Yalıhüyük", "Yunak"],
+        "Kütahya": ["Merkez", "Altıntaş", "Aslanapa", "Çavdarhisar", "Domaniç", "Dumlupınar", "Emet", "Gediz", "Hisarcık", "Pazarlar", "Şaphane", "Simav", "Tavşanlı"],
+        "Malatya": ["Battalgazi", "Yeşilyurt", "Akçadağ", "Arapgir", "Arguvan", "Darende", "Doğanşehir", "Doğanyol", "Hekimhan", "Kale", "Kuluncak", "Pütürge", "Yazıhan"],
+        "Manisa": ["Şehzadeler", "Yunusemre", "Ahmetli", "Akhisar", "Alaşehir", "Demirci", "Gölmarmara", "Gördes", "Kırkağaç", "Köprübaşı", "Kula", "Salihli", "Sarıgöl", "Saruhanlı", "Selendi", "Soma", "Turgutlu"],
+        "Mardin": ["Artuklu", "Dargeçit", "Derik", "Kızıltepe", "Mazıdağı", "Midyat", "Nusaybin", "Ömerli", "Savur", "Yeşilli"],
+        "Mersin": ["Akdeniz", "Mezitli", "Toroslar", "Yenişehir", "Anamur", "Aydıncık", "Bozyazı", "Çamlıyayla", "Erdemli", "Gülnar", "Mut", "Silifke", "Tarsus"],
+        "Muğla": ["Menteşe", "Bodrum", "Dalaman", "Datça", "Fethiye", "Kavaklıdere", "Köyceğiz", "Marmaris", "Milas", "Ortaca", "Seydikemer", "Ula", "Yatağan"],
+        "Muş": ["Merkez", "Bulanık", "Hasköy", "Korkut", "Malazgirt", "Varto"],
+        "Nevşehir": ["Merkez", "Acıgöl", "Avanos", "Derinkuyu", "Gülşehir", "Hacıbektaş", "Kozaklı", "Ürgüp"],
+        "Niğde": ["Merkez", "Altunhisar", "Bor", "Çamardı", "Çiftlik", "Ulukışla"],
+        "Ordu": ["Altınordu", "Akkuş", "Aybastı", "Çamaş", "Çatalpınar", "Çaybaşı", "Fatsa", "Gölköy", "Gülyalı", "Gürgentepe", "İkizce", "Kabadüz", "Kabataş", "Korgan", "Kumru", "Mesudiye", "Perşembe", "Ulubey", "Ünye"],
+        "Osmaniye": ["Merkez", "Bahçe", "Düziçi", "Hasanbeyli", "Kadirli", "Sumbas", "Toprakkale"],
+        "Rize": ["Merkez", "Ardeşen", "Çamlıhemşin", "Çayeli", "Derepazarı", "Fındıklı", "Güneysu", "Hemşin", "İkizdere", "İyidere", "Kalkandere", "Pazar"],
+        "Sakarya": ["Adapazarı", "Akyazı", "Arifiye", "Erenler", "Ferizli", "Geyve", "Hendek", "Karapürçek", "Karasu", "Kaynarca", "Kocaali", "Pamukova", "Sapanca", "Serdivan", "Söğütlü", "Taraklı"],
+        "Samsun": ["Atakum", "Canik", "İlkadım", "Tekkeköy", "Alaçam", "Asarcık", "Ayvacık", "Bafra", "Çarşamba", "Havza", "Kavak", "Ladik", "Salıpazarı", "Terme", "Vezirköprü", "Yakakent"],
+        "Şanlıurfa": ["Eyyübiye", "Haliliye", "Karaköprü", "Akçakale", "Birecik", "Bozova", "Ceylanpınar", "Harran", "Hilvan", "Siverek", "Suruç", "Viranşehir"],
+        "Siirt": ["Merkez", "Baykan", "Eruh", "Kurtalan", "Pervari", "Şirvan", "Tillo"],
+        "Sinop": ["Merkez", "Ayancık", "Boyabat", "Dikmen", "Durağan", "Erfelek", "Gerze", "Saraydüzü", "Türkeli"],
+        "Sivas": ["Merkez", "Akıncılar", "Altınyayla", "Divriği", "Doğanşar", "Gemerek", "Gölova", "Gürün", "Hafik", "İmranlı", "Kangal", "Koyulhisar", "Şarkışla", "Suşehri", "Ulaş", "Yıldızeli", "Zara"],
+        "Şırnak": ["Merkez", "Beytüşşebap", "Cizre", "Güçlükonak", "İdil", "Silopi", "Uludere"],
+        "Tekirdağ": ["Süleymanpaşa", "Çerkezköy", "Çorlu", "Ergene", "Hayrabolu", "Kapaklı", "Malkara", "Marmaraereğlisi", "Muratlı", "Şarköy"],
+        "Tokat": ["Merkez", "Almus", "Artova", "Başçiftlik", "Erbaa", "Niksar", "Pazar", "Reşadiye", "Sulusaray", "Turhal", "Yeşilyurt", "Zile"],
+        "Trabzon": ["Ortahisar", "Akçaabat", "Araklı", "Arsin", "Beşikdüzü", "Çarşıbaşı", "Çaykara", "Dernekpazarı", "Düzköy", "Hayrat", "Köprübaşı", "Maçka", "Of", "Sürmene", "Şalpazarı", "Tonya", "Vakfıkebir", "Yomra"],
+        "Tunceli": ["Merkez", "Çemişgezek", "Hozat", "Mazgirt", "Nazımiye", "Ovacık", "Pertek", "Pülümür"],
+        "Uşak": ["Merkez", "Banaz", "Eşme", "Karahallı", "Sivaslı", "Ulubey"],
+        "Van": ["İpekyolu", "Tuşba", "Bahçesaray", "Başkale", "Çaldıran", "Çatak", "Edremit", "Erciş", "Gevaş", "Gürpınar", "Muradiye", "Özalp", "Saray"],
+        "Yalova": ["Merkez", "Altınova", "Armutlu", "Çınarcık", "Çiftlikköy", "Termal"],
+        "Yozgat": ["Merkez", "Akdağmadeni", "Aydıncık", "Boğazlıyan", "Çandır", "Çayıralan", "Çekerek", "Kadışehri", "Saraykent", "Sarıkaya", "Şefaatli", "Sorgun", "Yenifakılı", "Yerköy"],
+        "Zonguldak": ["Merkez", "Alaplı", "Çaycuma", "Devrek", "Gökçebey", "Kilimli", "Kozlu"]
+    };
+
+    // Populate cities
+    function populateCities() {
+        const cities = Object.keys(turkeyData).sort();
+        const originCitySelect = document.getElementById('originCitySelect');
+        const destinationCitySelect = document.getElementById('destinationCitySelect');
+
+        cities.forEach(city => {
+            const option1 = new Option(city, city);
+            const option2 = new Option(city, city);
+            originCitySelect.add(option1);
+            destinationCitySelect.add(option2);
+        });
+    }
+
+    // Populate districts based on city
+    function populateDistricts(citySelectId, districtSelectId) {
+        const citySelect = document.getElementById(citySelectId);
+        const districtSelect = document.getElementById(districtSelectId);
+
+        citySelect.addEventListener('change', function() {
+            const selectedCity = this.value;
+            districtSelect.innerHTML = '<option value="">İlçe Seçiniz</option>';
+
+            if (selectedCity && turkeyData[selectedCity]) {
+                districtSelect.disabled = false;
+                turkeyData[selectedCity].forEach(district => {
+                    const option = new Option(district, district);
+                    districtSelect.add(option);
+                });
+                updatePreview();
+            } else {
+                districtSelect.disabled = true;
+            }
+        });
+
+        districtSelect.addEventListener('change', updatePreview);
+    }
+
+    // Auto-generate tracking number
+    function generateTrackingNumber() {
+        const prefix = 'TRK-';
+        const random = Math.random().toString(36).substring(2, 10).toUpperCase();
+        return prefix + random;
+    }
+
+    // Set default date
+    function setDefaultDate() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const adjustedDate = new Date(now.getTime() - offset * 60 * 1000);
+        const dateString = adjustedDate.toISOString().slice(0, 16);
+        document.getElementById('dateInput').value = dateString;
+        updatePreview();
+    }
+
+    // Update preview
+    function updatePreview() {
+        const trackingInput = document.getElementById('trackingInput');
+        const senderInput = document.getElementById('senderInput');
+        const receiverInput = document.getElementById('receiverInput');
+        const originCitySelect = document.getElementById('originCitySelect');
+        const originDistrictSelect = document.getElementById('originDistrictSelect');
+        const destinationCitySelect = document.getElementById('destinationCitySelect');
+        const destinationDistrictSelect = document.getElementById('destinationDistrictSelect');
+        const addressInput = document.getElementById('addressInput');
+        const dateInput = document.getElementById('dateInput');
+        const statusInput = document.getElementById('statusInput');
+
+        document.getElementById('previewTracking').textContent = trackingInput?.value || 'TRK-XXXXXXXX';
+        document.getElementById('previewSender').textContent = senderInput?.value || '-';
+        document.getElementById('previewReceiver').textContent = receiverInput?.value || '-';
+
+        const originFull = originCitySelect?.value && originDistrictSelect?.value
+            ? `${originCitySelect.value} / ${originDistrictSelect.value}`
+            : 'Çıkış: Şehir / İlçe';
+        document.getElementById('previewOriginFull').textContent = originFull;
+
+        const destFull = destinationCitySelect?.value && destinationDistrictSelect?.value
+            ? `${destinationCitySelect.value} / ${destinationDistrictSelect.value}`
+            : 'Varış: Şehir / İlçe';
+        document.getElementById('previewDestinationFull').textContent = destFull;
+
+        const address = addressInput?.value || '-';
+        document.getElementById('previewAddress').textContent = address.length > 50 ? address.substring(0, 50) + '...' : address;
+
+        if (dateInput?.value) {
+            const date = new Date(dateInput.value);
+            const formatted = date.toLocaleDateString('tr-TR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('previewDate').textContent = formatted;
+        }
+
+        document.getElementById('previewStatus').textContent = statusInput?.value || 'Bekliyor';
+    }
+
+    // Initialize
+    window.addEventListener('load', function() {
+        populateCities();
+        populateDistricts('originCitySelect', 'originDistrictSelect');
+        populateDistricts('destinationCitySelect', 'destinationDistrictSelect');
+
+        const trackingInput = document.getElementById('trackingInput');
+        if (!trackingInput.value) {
+            trackingInput.value = generateTrackingNumber();
+        }
+        setDefaultDate();
+
+        // Add event listeners for preview
+        ['trackingInput', 'senderInput', 'receiverInput', 'addressInput', 'dateInput', 'statusInput'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', updatePreview);
+                element.addEventListener('change', updatePreview);
+            }
+        });
+
+        updatePreview();
+    });
+
+    // Form validation
+    document.getElementById('shipmentForm')?.addEventListener('submit', (e) => {
+        const originCity = document.getElementById('originCitySelect').value;
+        const originDistrict = document.getElementById('originDistrictSelect').value;
+        const destCity = document.getElementById('destinationCitySelect').value;
+        const destDistrict = document.getElementById('destinationDistrictSelect').value;
+
+        if (!originCity || !originDistrict || !destCity || !destDistrict) {
+            e.preventDefault();
+            alert('Lütfen çıkış ve varış şehir/ilçe bilgilerini eksiksiz doldurun!');
+            return false;
+        }
+
+        if (originCity === destCity && originDistrict === destDistrict) {
+            e.preventDefault();
+            alert('Çıkış ve varış lokasyonu aynı olamaz!');
+            return false;
+        }
+    });
+</script>

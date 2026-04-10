@@ -1,4 +1,5 @@
 using DatabaseMastery.TransportMongoDb.Services.HowItWorkServices;
+using DatabaseMastery.TransportMongoDb.Services.ShipmentTrackingServices;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 using TransportationMongoDB.Services.AboutServices;
@@ -7,6 +8,7 @@ using TransportationMongoDB.Services.GetInTouchService;
 using TransportationMongoDB.Services.OfferServices;
 using TransportationMongoDB.Services.ProjectSectionServices;
 using TransportationMongoDB.Services.QuestionServices;
+using TransportationMongoDB.Services.ShipmentServices;
 using TransportationMongoDB.Services.SliderServices;
 using TransportationMongoDB.Services.TestimonialService;
 using TransportationMongoDB.Settings;
@@ -22,6 +24,8 @@ builder.Services.AddScoped<IHowItWorkService, HowItWorkService>();
 builder.Services.AddScoped<ITestimonialService, TestimonialService>();
 builder.Services.AddScoped<IProjectSectionService, ProjectSectionService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IShipmentService, ShipmentService>();
+builder.Services.AddScoped<IShipmentTrackingService, ShipmentTrackingService>();
 
 
 builder.Services.AddAutoMapper(cfg =>
