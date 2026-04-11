@@ -1,0 +1,427 @@
+﻿@model TrackingResultViewModel
+@{
+    ViewData["Title"] = "Kargo Takip";
+
+    // Progress adım etiketleri ve ikonları
+    var steps = new[]
+    {
+        new { Label = "Alındı",          Icon = "bi-box-seam"          },
+        new { Label = "Transfer",         Icon = "bi-building"          },
+        new { Label = "Yolda",            Icon = "bi-truck"             },
+        new { Label = "Dağıtımda",        Icon = "bi-geo-alt"           },
+        new { Label = "Teslim Edildi",    Icon = "bi-check-circle-fill" }
+    };
+
+    int currentStep = Model?.CurrentStepIndex ?? -1;
+    double fillPercent = currentStep < 0 ? 0 : (currentStep / 4.0) * 100;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kargo Takip - Transp Lojistik</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0A4D68;
+            --primary-dark: #083B52;
+            --secondary: #FDB022;
+            --accent: #05668D;
+            --success: #10b981;
+            --dark: #1E293B;
+            --light-bg: #F8FAFC;
+            --border: #E2E8F0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--light-bg);
+            color: var(--dark);
+        }
+
+        /* Top Bar */
+        .top-bar { background: var(--dark); color: white; padding: 12px 0; font-size: 14px; }
+        .top-bar-content { display: flex; justify-content: space-between; align-items: center; }
+        .contact-info { display: flex; gap: 32px; }
+        .contact-item { display: flex; align-items: center; gap: 8px; color: white; text-decoration: none; }
+        .contact-item i { color: var(--secondary); }
+        .social-links { display: flex; gap: 16px; }
+        .social-links a { color: white; font-size: 16px; transition: color 0.3s; }
+        .social-links a:hover { color: var(--secondary); }
+
+        /* Header */
+        .main-header { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+        .logo { font-size: 28px; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--secondary), #FFD700); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+        .nav-menu { display: flex; gap: 32px; list-style: none; margin: 0; }
+        .nav-link { color: var(--dark); text-decoration: none; font-weight: 600; font-size: 15px; transition: color 0.3s; }
+        .nav-link:hover { color: var(--primary); }
+        .header-actions { display: flex; gap: 16px; align-items: center; }
+        .btn-tracking { background: var(--secondary); color: var(--dark); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .btn-tracking:hover { background: #FFD700; transform: translateY(-2px); box-shadow: 0 8px 16px rgba(253,176,34,0.3); }
+
+        /* Hero */
+        .hero-section { background: linear-gradient(135deg, var(--primary), var(--accent)); padding: 80px 0 120px; position: relative; overflow: hidden; }
+        .hero-section::before { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.05)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') bottom/cover no-repeat; opacity: 0.3; }
+        .hero-content { position: relative; z-index: 1; }
+        .breadcrumb-custom { display: flex; gap: 8px; margin-bottom: 24px; color: rgba(255,255,255,0.8); font-size: 14px; }
+        .breadcrumb-custom a { color: white; text-decoration: none; }
+        .hero-title { color: white; font-size: 52px; font-weight: 900; margin-bottom: 16px; line-height: 1.2; }
+        .hero-subtitle { color: rgba(255,255,255,0.9); font-size: 20px; font-weight: 500; max-width: 700px; }
+
+        /* Tracking Card */
+        .tracking-section { margin-top: -80px; position: relative; z-index: 10; padding-bottom: 80px; }
+        .tracking-card { background: white; border-radius: 24px; box-shadow: 0 24px 64px rgba(0,0,0,0.12); padding: 48px; margin-bottom: 48px; }
+        .tracking-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid var(--border); }
+        .tracking-icon { width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; }
+        .tracking-title h2 { font-size: 28px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+        .tracking-title p { color: #64748b; font-size: 15px; }
+
+        .search-container { display: grid; grid-template-columns: 1fr auto; gap: 16px; margin-bottom: 24px; }
+        .search-input-wrapper { position: relative; }
+        .search-input { width: 100%; padding: 18px 24px 18px 56px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; font-weight: 600; font-family: 'Courier New', monospace; letter-spacing: 1px; transition: all 0.3s; }
+        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(10,77,104,0.1); }
+        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--primary); }
+        .btn-search { padding: 18px 40px; background: linear-gradient(135deg, var(--secondary), #FFD700); color: var(--dark); border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+        .btn-search:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(253,176,34,0.4); }
+
+        /* Not Found */
+        .not-found-card { background: #FFF5F5; border: 2px solid #FED7D7; border-radius: 20px; padding: 48px; text-align: center; }
+        .not-found-card i { font-size: 64px; color: #FC8181; margin-bottom: 16px; }
+        .not-found-card h3 { font-size: 24px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+        .not-found-card p { color: #64748b; font-size: 16px; }
+
+        /* Results */
+        .results-section { animation: fadeInUp 0.6s ease-out; }
+        @@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .results-header { background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 20px; padding: 32px; margin-bottom: 32px; color: white; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+        .tracking-info h3 { font-size: 13px; font-weight: 600; opacity: 0.85; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .tracking-number-display { font-size: 32px; font-weight: 900; font-family: 'Courier New', monospace; letter-spacing: 2px; }
+        .delivery-status { text-align: right; }
+        .status-badge { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 12px; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .estimated-delivery { font-size: 14px; opacity: 0.9; }
+
+        /* Shipment Info Grid */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .info-card { background: white; border: 2px solid var(--border); border-radius: 16px; padding: 20px; }
+        .info-card-label { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+        .info-card-value { font-size: 16px; font-weight: 700; color: var(--dark); }
+
+        /* Progress */
+        .progress-container { background: white; border-radius: 20px; padding: 40px; margin-bottom: 32px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .progress-steps { display: flex; justify-content: space-between; position: relative; margin-bottom: 16px; }
+        .progress-line { position: absolute; top: 24px; left: 0; right: 0; height: 4px; background: var(--border); z-index: 1; }
+        .progress-line-fill { height: 100%; background: linear-gradient(90deg, var(--success), var(--primary)); transition: width 1s ease; }
+        .progress-step { position: relative; z-index: 2; text-align: center; flex: 1; }
+        .step-circle { width: 48px; height: 48px; border-radius: 50%; background: white; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 20px; transition: all 0.4s; }
+        .progress-step.completed .step-circle { background: linear-gradient(135deg, var(--success), #059669); border-color: var(--success); color: white; }
+        .progress-step.active .step-circle { background: linear-gradient(135deg, var(--primary), var(--accent)); border-color: var(--primary); color: white; animation: pulse 2s infinite; }
+        @@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(10,77,104,0.7); } 50% { box-shadow: 0 0 0 12px rgba(10,77,104,0); } }
+        .step-label { font-size: 13px; font-weight: 600; color: #64748b; }
+        .progress-step.completed .step-label, .progress-step.active .step-label { color: var(--dark); font-weight: 700; }
+
+        /* Timeline */
+        .timeline-container { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .timeline-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .timeline-header h3 { font-size: 22px; font-weight: 800; color: var(--dark); }
+        .timeline { position: relative; }
+        .timeline::before { content: ''; position: absolute; left: 27px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(180deg, var(--success), var(--border)); }
+        .timeline-item { position: relative; padding-left: 80px; padding-bottom: 32px; animation: fadeInLeft 0.5s ease-out both; }
+        .timeline-item:last-child { padding-bottom: 0; }
+        @@keyframes fadeInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        .timeline-marker { position: absolute; left: 0; top: 0; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .timeline-marker.delivered { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+        .timeline-marker.transit { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+        .timeline-marker.processing { background: linear-gradient(135deg, var(--secondary), #FFD700); color: var(--dark); }
+        .timeline-content { background: var(--light-bg); border-radius: 16px; padding: 24px; transition: all 0.3s; border: 2px solid transparent; }
+        .timeline-content:hover { background: white; border-color: var(--primary); transform: translateX(8px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .timeline-date { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 12px; }
+        .timeline-title { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+        .timeline-location { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #64748b; font-weight: 500; }
+        .timeline-description { font-size: 13px; color: #94a3b8; margin-top: 8px; }
+
+        /* Support */
+        .support-section { background: linear-gradient(135deg, var(--light-bg), white); border-radius: 20px; padding: 32px; margin-top: 32px; text-align: center; border: 2px dashed var(--border); }
+        .support-section h4 { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 16px; }
+        .support-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .support-link { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: white; color: var(--primary); text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 14px; border: 2px solid var(--border); transition: all 0.3s; }
+        .support-link:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 16px rgba(10,77,104,0.15); }
+
+        @@media (max-width: 992px) {
+            .nav-menu { display: none; }
+            .hero-title { font-size: 40px; }
+            .search-container { grid-template-columns: 1fr; }
+            .results-header { grid-template-columns: 1fr; text-align: center; }
+            .delivery-status { text-align: center; }
+        }
+        @@media (max-width: 768px) {
+            .tracking-card { padding: 24px; }
+            .progress-container, .timeline-container { padding: 24px; }
+            .timeline-item { padding-left: 64px; }
+            .timeline-marker { width: 44px; height: 44px; font-size: 18px; }
+            .timeline::before { left: 21px; }
+            .tracking-number-display { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <a href="tel:+905004003020" class="contact-item">
+                        <i class="bi bi-telephone-fill"></i>
+                        <span>+90 (500) 400 30 20</span>
+                    </a>
+                    <a href="mailto:iletisim@transportation.com" class="contact-item">
+                        <i class="bi bi-envelope-fill"></i>
+                        <span>iletisim@transportation.com</span>
+                    </a>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="bi bi-twitter"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <div class="logo-icon">🚚</div>
+                    <span>Transp</span>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link">Ana Sayfa</a></li>
+                    <li><a href="#" class="nav-link">Hakkımızda</a></li>
+                    <li><a href="#" class="nav-link">Hizmetlerimiz</a></li>
+                    <li><a href="#" class="nav-link">Ekibimiz</a></li>
+                    <li><a href="#" class="nav-link">Bize Yazın</a></li>
+                </ul>
+                <div class="header-actions">
+                    <a href="@Url.Action("Index", "Tracking")" class="btn-tracking">
+                        <i class="bi bi-box-seam"></i>
+                        Kargo Takip
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <div class="breadcrumb-custom">
+                    <a href="/">Ana Sayfa</a>
+                    <span>/</span>
+                    <span>Kargo Takip</span>
+                </div>
+                <h1 class="hero-title">Kargo Takip Sistemi</h1>
+                <p class="hero-subtitle">Gönderinizin anlık konumunu ve durumunu kolayca takip edin. Hızlı, güvenli ve şeffaf teslimat süreci.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tracking Section -->
+    <section class="tracking-section">
+        <div class="container">
+
+            <!-- Arama Kartı -->
+            <div class="tracking-card">
+                <div class="tracking-header">
+                    <div class="tracking-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <div class="tracking-title">
+                        <h2>Kargo Sorgulama</h2>
+                        <p>Takip numaranızı girerek kargonuzun durumunu öğrenin</p>
+                    </div>
+                </div>
+
+                <form method="get" action="@Url.Action("Index", "Tracking")">
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <i class="bi bi-box-seam search-icon"></i>
+                            <input
+                                type="text"
+                                name="trackingNumber"
+                                id="trackingInput"
+                                class="search-input"
+                                placeholder="Takip numaranızı girin (örn: TRK-1001ABC)"
+                                value="@Context.Request.Query["trackingNumber"]"
+                                autocomplete="off"
+                            />
+                        </div>
+                        <button type="submit" class="btn-search">
+                            <i class="bi bi-search"></i>
+                            <span>Kargomu Sorgula</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            @* Kayıt bulunamadı *@
+            @if (ViewBag.NotFound == true)
+            {
+                <div class="not-found-card">
+                    <i class="bi bi-box-seam"></i>
+                    <h3>Kargo Bulunamadı</h3>
+                    <p>
+                        <strong>@ViewBag.SearchedNumber</strong> numaralı kargoya ait kayıt sistemimizde bulunmamaktadır.<br>
+                        Lütfen takip numaranızı kontrol ederek tekrar deneyin.
+                    </p>
+                </div>
+            }
+
+            @* Sonuçlar *@
+            @if (Model != null)
+            {
+                <!-- Durum Başlığı -->
+                <div class="results-header">
+                    <div class="tracking-info">
+                        <h3>Takip Numarası</h3>
+                        <div class="tracking-number-display">@Model.TrackingNumber</div>
+                    </div>
+                    <div class="delivery-status">
+                        <div class="status-badge">
+                            @if (Model.IsDelivered)
+                            {
+                                <i class="bi bi-check-circle-fill"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-truck"></i>
+                            }
+                            @Model.CurrentStatus
+                        </div>
+                        <div class="estimated-delivery">
+                            Oluşturma: @Model.CreatedDate.ToString("dd MMMM yyyy, HH:mm", new System.Globalization.CultureInfo("tr-TR"))
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kargo Bilgileri -->
+                <div class="info-grid mb-4">
+                    <div class="info-card">
+                        <div class="info-card-label">Gönderici</div>
+                        <div class="info-card-value">@Model.SenderName</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">Alıcı</div>
+                        <div class="info-card-value">@Model.ReceiverName</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">Çıkış</div>
+                        <div class="info-card-value">@Model.OriginCity / @Model.OriginDistrict</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">Teslimat</div>
+                        <div class="info-card-value">@Model.DestinationCity / @Model.DestinationDistrict</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">Adres</div>
+                        <div class="info-card-value">@Model.Address</div>
+                    </div>
+                </div>
+
+                <!-- Progress Adımları -->
+                <div class="progress-container">
+                    <div class="progress-steps">
+                        <div class="progress-line">
+                            <div class="progress-line-fill" style="width: @fillPercent.ToString("0", System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                        </div>
+                        @for (int i = 0; i < steps.Length; i++)
+                        {
+                            string stepClass = i < currentStep ? "completed" : (i == currentStep ? "active" : "");
+                            <div class="progress-step @stepClass">
+                                <div class="step-circle">
+                                    <i class="bi @steps[i].Icon"></i>
+                                </div>
+                                <div class="step-label">@steps[i].Label</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <h3><i class="bi bi-clock-history"></i> Kargo Hareketleri</h3>
+                    </div>
+
+                    @if (Model.Events.Any())
+                    {
+                        <div class="timeline">
+                            @for (int i = 0; i < Model.Events.Count; i++)
+                            {
+                                var ev = Model.Events[i];
+                                <div class="timeline-item" style="animation-delay: @(i * 0.1)s">
+                                    <div class="timeline-marker @ev.MarkerClass">
+                                        <i class="bi @ev.IconClass"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            <i class="bi bi-calendar3"></i>
+                                            @ev.EventDate.ToString("dd MMMM yyyy, HH:mm", new System.Globalization.CultureInfo("tr-TR"))
+                                        </div>
+                                        <div class="timeline-title">@ev.TrackingStatus</div>
+                                        <div class="timeline-location">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                            @ev.Location
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(ev.Description))
+                                        {
+                                            <div class="timeline-description">@ev.Description</div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-4">Henüz hareket kaydı bulunmamaktadır.</p>
+                    }
+                </div>
+
+                <!-- Destek -->
+                <div class="support-section">
+                    <h4>Kargonuzla ilgili bir sorun mu var?</h4>
+                    <div class="support-links">
+                        <a href="tel:+905004003020" class="support-link">
+                            <i class="bi bi-headset"></i>
+                            Müşteri Hizmetleri
+                        </a>
+                        <a href="https://wa.me/905004003020" class="support-link" target="_blank">
+                            <i class="bi bi-whatsapp"></i>
+                            WhatsApp Destek
+                        </a>
+                        <a href="#" class="support-link">
+                            <i class="bi bi-chat-dots"></i>
+                            Canlı Destek
+                        </a>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
